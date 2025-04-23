@@ -50,8 +50,7 @@ const formSchema = z
   });
 
 const Signup = () => {
-  const [signUp, { data, isLoading, isSuccess, error, isError }] =
-    useSignUpMutation();
+  const [signUp, { data, error }] = useSignUpMutation();
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),

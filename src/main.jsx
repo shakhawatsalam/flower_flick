@@ -7,11 +7,11 @@ import { BrowserRouter } from "react-router";
 import AppRoutes from "./routes/AppRoutes";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </Provider>
-  </StrictMode>
+  // <StrictMode>
+  <Provider store={store}>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  </Provider>
+  // </StrictMode>
 );

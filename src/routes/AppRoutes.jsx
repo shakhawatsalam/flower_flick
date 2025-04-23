@@ -1,5 +1,6 @@
 import MainLayout from "@/layouts/MainLayout";
 import AboutPage from "@/pages/AboutPage";
+import ActivateAccountPage from "@/pages/ActivateAccountPage";
 import BlogPage from "@/pages/BlogPage";
 import CartPage from "@/pages/CartPage";
 import EmailCheckPage from "@/pages/EmailCheckPage";
@@ -34,6 +35,7 @@ const AppRoutes = () => {
         <Route path='/cart' element={<CartPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
         <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />
       </Route>

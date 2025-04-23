@@ -26,6 +26,7 @@ const EmailCheckPage = () => {
     if (cooldown > 0 || !email) return;
     try {
       await resendActivation({ email }).unwrap();
+
       setCooldown(60);
     } catch (err) {
       setMessage("Failed to send activation. Please try again.", err);

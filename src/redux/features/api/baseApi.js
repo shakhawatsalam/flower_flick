@@ -10,7 +10,6 @@ export const baseApi = createApi({
       // If token exists, add it to the Authorization heade
       if (token) {
         const parsedToken = JSON.parse(token);
-        console.log("Parsed Token:", parsedToken);
         headers.set("authorization", `JWT ${parsedToken}`);
       }
       return headers;

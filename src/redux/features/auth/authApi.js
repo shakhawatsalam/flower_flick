@@ -23,6 +23,13 @@ const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
+    userActivation: builder.mutation({
+      query: (data) => ({
+        url: `/auth/users/activation/`,
+        method: "POST",
+        body: data,
+      }),
+    }),
     fetchUserProfile: builder.query({
       query: () => ({
         url: `/auth/users/me`,
@@ -37,4 +44,5 @@ export const {
   useSignUpMutation,
   useFetchUserProfileQuery,
   useResendActivationMutation,
+  useUserActivationMutation
 } = authApi;
