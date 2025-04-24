@@ -21,7 +21,9 @@ const Navbar = () => {
       <div className='container max-w-7xl mx-auto flex items-center justify-between h-16 lg:h-32  px-4 lg:px-0'>
         {/* Logo */}
         <h1 className='text-3xl font-playfair uppercase tracking-wider'>
-          <span className='text-[#F34F3F]'>Flower</span> Flick
+          <Link to='/'>
+            <span className='text-[#F34F3F]'>Flower</span> Flick
+          </Link>
         </h1>
 
         {/* Inline nav links (lg and up) */}

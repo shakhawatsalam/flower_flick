@@ -1,6 +1,9 @@
+import ProductDetailsPageSkeleton from "@/components/Skeleton/ProductDetailsPageSkeleton";
 import { Button } from "@/components/ui/button";
+import { useProductsByIdQuery } from "@/redux/features/product/productApi";
 import { Minus, Play, Plus } from "lucide-react";
 import React, { useState } from "react";
+import { useParams } from "react-router";
 
 const images = [
   "https://i.ibb.co.com/GTGBw03/image-323.png",
@@ -11,6 +14,10 @@ const images = [
 
 const ProductDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
+  const { id } = useParams();
+  const { data, isFetching } = useProductsByIdQuery({ id });
+
+  if (isFetching) return <ProductDetailsPageSkeleton />;
 
   return (
     <section>
@@ -53,11 +60,11 @@ const ProductDetailsPage = () => {
             <div className='flex flex-col gap-6'>
               <div>
                 <h1 className='text-4xl text-gray-800 font-playfair'>
-                  Apple iPhone 14 Pro Max
+                  {data?.title}
                 </h1>
                 <div className='flex items-center gap-2 mt-2 md:mt-5'>
                   <span className='text-md text-gray-600 font-montserrat tracking-wider'>
-                    $1399
+                    ${data?.price}
                   </span>
                 </div>
               </div>
