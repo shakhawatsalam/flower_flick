@@ -10,21 +10,45 @@ import ProductDetailsPage from "@/pages/ProductDetailsPage";
 import ShopPage from "@/pages/ShopPage";
 import SignUpPage from "@/pages/SignUpPage";
 import { useFetchUserProfileQuery } from "@/redux/features/auth/authApi";
+import {
+  useCreateCartMutation,
+
+} from "@/redux/features/cart/cartApi";
+import { addCart } from "@/redux/features/cart/cartSlice";
 import { addUser } from "@/redux/features/user/userSlice";
 import { getFromLocalStorage } from "@/utils/local_sotrage";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router";
 
 const AppRoutes = () => {
-  const { data } = useFetchUserProfileQuery();
+  const { data: userData } = useFetchUserProfileQuery(undefined, {
+    skip: !getFromLocalStorage("authToken"), // Skip query if no token
+  });
+  const [createCart, { data: cart, isSuccess }] = useCreateCartMutation();
   const dispatch = useDispatch();
+  const hasCreatedCart = useRef(false); // Track if cart creation was attempted
+
   useEffect(() => {
     const token = getFromLocalStorage("authToken");
-    if (token) {
-      dispatch(addUser(data));
+    if (token && !hasCreatedCart.current) {
+      hasCreatedCart.current = true; // Prevent future calls
+      createCart();
     }
-  }, [data, dispatch]);
+  }, [createCart]); // Only depend on createCart
+
+  useEffect(() => {
+    if (isSuccess && cart) {
+      console.log("cart from app route :", cart)
+      dispatch(addCart(cart)); // Dispatch cart when mutation succeeds
+    }
+  }, [cart, isSuccess, dispatch]);
+
+  useEffect(() => {
+    if (userData) {
+      dispatch(addUser(userData)); // Dispatch user data when available
+    }
+  }, [userData, dispatch]);
   return (
     <Routes>
       <Route element={<MainLayout />}>

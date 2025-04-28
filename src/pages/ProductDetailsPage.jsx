@@ -1,8 +1,14 @@
 import ProductDetailsPageSkeleton from "@/components/Skeleton/ProductDetailsPageSkeleton";
 import { Button } from "@/components/ui/button";
+import {
+  useAddToCartMutation,
+  useGetCartQuery,
+} from "@/redux/features/cart/cartApi";
+import { addCart } from "@/redux/features/cart/cartSlice";
 import { useProductsByIdQuery } from "@/redux/features/product/productApi";
 import { Minus, Play, Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 
 const images = [
@@ -14,11 +20,61 @@ const images = [
 
 const ProductDetailsPage = () => {
   const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
   const { data, isFetching } = useProductsByIdQuery({ id });
+  const [addToCart, { data: cartItem, isSuccess, isError, error }] =
+    useAddToCartMutation();
+  const cart = useSelector((state) => state?.cartSlice?.cart);
+  const cartId = cart?.id;
+  const { data: updatedCart, refetch } = useGetCartQuery({
+    skip: !isSuccess,
+  });
+  const dispatch = useDispatch();
+
+  // Handle quantity increment
+  const handleIncrement = () => {
+    if (quantity < data?.quantity) {
+      setQuantity((prev) => prev + 1);
+    }
+  };
+
+  // Handle quantity decrement
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
+  const handleAddToCart = async () => {
+    if (!cartId) {
+      console.error("No cart ID available. Cannot add to cart.");
+      return;
+    }
+    try {
+      const data = {
+        flower_id: id,
+        quantity,
+      };
+      console.log({ cartId, data });
+      await addToCart({ cartId, data }).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Update Redux store with the updated cart
+  useEffect(() => {
+    if (isSuccess && updatedCart) {
+      refetch();
+      dispatch(addCart(updatedCart[0]));
+      console.log("Cart updated in Redux:", updatedCart);
+    }
+    if (isError) {
+      console.error("Add to cart error:", error);
+    }
+  }, [isSuccess, isError, updatedCart, error, dispatch, refetch]);
 
   if (isFetching) return <ProductDetailsPageSkeleton />;
-
   return (
     <section>
       <div className='container max-w-7xl mx-auto p-3'>
@@ -28,7 +84,7 @@ const ProductDetailsPage = () => {
             <div className='flex flex-col-reverse gap-[15px] md:gap-0 md:flex-row'>
               {/* Thumbnails */}
               <div className='w-full md:w-[20%] flex flex-row md:flex-col md:gap-4 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 md:pr-2'>
-                {images.map((image, index) => (
+                {images?.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -79,30 +135,37 @@ const ProductDetailsPage = () => {
                 </button>
               </p>
               {/* qutaniity */}
-              <div className='flex'>
+              <div className='flex select-none '>
                 <div className='w-80 h-14 text-gray-400 flex items-center justify-between p-3 border border-gray-300'>
                   <div>
                     <p className='font-montserrat text-[0.8rem] tracking-wider'>
                       Quantity
                     </p>
                   </div>
-                  <div className='flex justify-center items-center gap-3 p-0.5  font-montserrat'>
+                  <div className='flex justify-center items-center gap-5 p-0.5  font-montserrat'>
                     <Play
                       size={11}
                       fill='#99a1af'
+                      onClick={handleDecrement}
                       className='rotate-180 cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
                     />
-                    <span>1</span>
+                    <span>{quantity}</span>
                     <Play
                       size={11}
                       fill='#99a1af'
+                      onClick={handleIncrement}
                       className='cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
                     />
                   </div>
                 </div>
-                <Button className='h-14 rounded-l-none bg-black hover:bg-black/90 cursor-pointer uppercase tracking-widest'>
+                <Button
+                  className='h-14 rounded-l-none bg-black hover:bg-black/90 cursor-pointer uppercase tracking-widest'
+                  onClick={handleAddToCart}>
                   Add to Card
                 </Button>
+              </div>
+              <div className='font-montserrat text-[14px]'>
+                Stock: {data.quantity}
               </div>
             </div>
           </div>
