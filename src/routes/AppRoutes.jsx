@@ -6,14 +6,13 @@ import CartPage from "@/pages/CartPage";
 import EmailCheckPage from "@/pages/EmailCheckPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
+import OrderPage from "@/pages/OrderPage";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 import ProductDetailsPage from "@/pages/ProductDetailsPage";
 import ShopPage from "@/pages/ShopPage";
 import SignUpPage from "@/pages/SignUpPage";
 import { useFetchUserProfileQuery } from "@/redux/features/auth/authApi";
-import {
-  useCreateCartMutation,
-
-} from "@/redux/features/cart/cartApi";
+import { useCreateCartMutation } from "@/redux/features/cart/cartApi";
 import { addCart } from "@/redux/features/cart/cartSlice";
 import { addUser } from "@/redux/features/user/userSlice";
 import { getFromLocalStorage } from "@/utils/local_sotrage";
@@ -39,7 +38,6 @@ const AppRoutes = () => {
 
   useEffect(() => {
     if (isSuccess && cart) {
-      console.log("cart from app route :", cart)
       dispatch(addCart(cart)); // Dispatch cart when mutation succeeds
     }
   }, [cart, isSuccess, dispatch]);
@@ -57,8 +55,10 @@ const AppRoutes = () => {
         <Route path='/about' element={<AboutPage />} />
         <Route path='/blog' element={<BlogPage />} />
         <Route path='/cart' element={<CartPage />} />
+        <Route path='/orders' element={<OrderPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/payment-success/' element={<PaymentSuccess />} />
         <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
         <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />

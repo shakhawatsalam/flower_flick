@@ -11,13 +11,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useUpdateCartItemMutation } from "@/redux/features/cart/cartApi";
+import {
+  useDeleteCartItemMutation,
+  useUpdateCartItemMutation,
+} from "@/redux/features/cart/cartApi";
+import { Skeleton } from "../ui/skeleton";
+import { useCreateOrderMutation } from "@/redux/features/order/orderApi";
 
 const CartDetails = () => {
   const cart = useSelector((state) => state.cartSlice);
   const [localCart, setLocalCart] = useState(cart.cart);
   const [updateCartItem] = useUpdateCartItemMutation();
-
+  const [deleteCartItem] = useDeleteCartItemMutation();
+  const [createOrder] = useCreateOrderMutation();
   useEffect(() => {
     setLocalCart(cart.cart);
   }, [cart]);
@@ -35,7 +41,7 @@ const CartDetails = () => {
     if (quantity < 1) return;
 
     const prevLocalCopy = { ...localCart };
-    // Optimistically update local state
+    // update local state
     const updatedItems = localCart.items.map((item) =>
       item.id === itemId ? { ...item, quantity } : item
     );
@@ -56,6 +62,36 @@ const CartDetails = () => {
     }
   };
 
+  const handleDeleteCartItem = async (itemId) => {
+    const prevLocalCopy = { ...localCart };
+
+    // delete local state
+    const deletedItems = localCart.items.filter((item) => item.id !== itemId);
+    setLocalCart({
+      ...localCart,
+      items: deletedItems,
+      total_price: calculateTotalPrice(deletedItems), // Update total price locally
+    });
+
+    try {
+      const { id: cartId } = cart.cart;
+
+      await deleteCartItem({ cartId, itemId });
+    } catch (error) {
+      console.log("error deleting quantity", error);
+      setLocalCart(prevLocalCopy);
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    try {
+      const { id: cartId } = cart.cart;
+      await createOrder({ cart_id: cartId }).unwrap();
+    } catch (error) {
+      console.log("Error Creating Order", error);
+    }
+  };
+
   return (
     <section>
       <div className='container mx-auto max-w-7xl mb-[20vh]'>
@@ -69,78 +105,122 @@ const CartDetails = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {localCart?.items?.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className='font-medium w-[200px]'>
-                  <div className='flex gap-3 justify-start items-center h-full'>
-                    <div className='cursor-pointer'>
-                      <X size={16} />
-                    </div>
-                    <div className='h-28 w-28'>
-                      <img
-                        src={Image}
-                        alt='image'
-                        className='h-full w-full object-contain'
-                      />
-                    </div>
-                    <h2>{item?.flower?.title}</h2>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <p>{item?.flower?.price}</p>
-                </TableCell>
-                <TableCell>
-                  <div>
-                    <div className='h-14 text-gray-400 flex items-center justify-between p-3 border border-gray-300'>
-                      <div>
-                        <p className='font-montserrat text-[0.8rem] tracking-wider'>
-                          Quantity
-                        </p>
-                      </div>
-                      <div className='flex justify-center items-center gap-3 p-0.5 font-montserrat'>
-                        <Play
-                          size={11}
-                          fill='#99a1af'
-                          className='rotate-180 cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
-                          onClick={() =>
-                            handleUpdateCartItem(item.id, item.quantity - 1)
-                          }
-                        />
-                        <span>{item?.quantity}</span>
-                        <Play
-                          size={11}
-                          fill='#99a1af'
-                          className='cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
-                          onClick={() =>
-                            handleUpdateCartItem(item.id, item.quantity + 1)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className='text-center'>
-                  $ {(item?.flower?.price * item.quantity).toFixed(2)}
+            {localCart?.items?.length === 0 && (
+              <TableRow className='font-semibold h-24'>
+                <TableCell colSpan={4} className='bg-red-200 text-center'>
+                  There is No Items in your cart
                 </TableCell>
               </TableRow>
-            ))}
+            )}
+            {Object.keys(localCart).length === 0
+              ? [...Array(4)].map((_, idx) => (
+                  <TableRow key={idx}>
+                    <TableCell className='font-medium w-[200px]'>
+                      <div className='flex gap-3 justify-start items-center h-full'>
+                        <div className='cursor-pointer'>
+                          <Skeleton className='h-5 w-5' />
+                        </div>
+                        <div className='h-28 w-24'>
+                          <Skeleton className='h-full w-full' />
+                        </div>
+                        <Skeleton className='h-5 w-32' />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-5 w-24' />
+                    </TableCell>
+                    <TableCell>
+                      <div className='h-14 text-gray-400 flex items-center justify-between '>
+                        <Skeleton className='h-full w-full' />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className='h-5 w-24 mx-auto' />
+                    </TableCell>
+                  </TableRow>
+                ))
+              : localCart?.items?.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className='font-medium w-[200px]'>
+                      <div className='flex gap-3 justify-start items-center h-full'>
+                        <div className='cursor-pointer'>
+                          <X
+                            size={16}
+                            onClick={() => handleDeleteCartItem(item.id)}
+                          />
+                        </div>
+                        <div className='h-28 w-28'>
+                          <img
+                            src={Image}
+                            alt='image'
+                            className='h-full w-full object-contain'
+                          />
+                        </div>
+                        <h2>{item?.flower?.title}</h2>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p>{item?.flower?.price}</p>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <div className='h-14 text-gray-400 flex items-center justify-between p-3 border border-gray-300'>
+                          <div>
+                            <p className='font-montserrat text-[0.8rem] tracking-wider'>
+                              Quantity
+                            </p>
+                          </div>
+                          <div className='flex justify-center items-center gap-3 p-0.5 font-montserrat'>
+                            <Play
+                              size={11}
+                              fill='#99a1af'
+                              className='rotate-180 cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
+                              onClick={() =>
+                                handleUpdateCartItem(item.id, item.quantity - 1)
+                              }
+                            />
+                            <span>{item?.quantity}</span>
+                            <Play
+                              size={11}
+                              fill='#99a1af'
+                              className='cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
+                              onClick={() =>
+                                handleUpdateCartItem(item.id, item.quantity + 1)
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className='text-center'>
+                      $ {(item?.flower?.price * item.quantity).toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                ))}
             <TableRow className='font-semibold h-24'>
               <TableCell />
               <TableCell />
-              <TableCell className='text-end'>Total :</TableCell>
+              <TableCell className='text-end'>Total Price :</TableCell>
               <TableCell className='text-center'>
-                <p>$ {localCart?.total_price?.toFixed(2)}</p>
+                {Object.keys(localCart).length === 0 ? (
+                  <Skeleton className='h-5 w-24 mx-auto' />
+                ) : (
+                  <p>$ {localCart?.total_price?.toFixed(2)}</p>
+                )}
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
         <div className='h-12 font-montserrat my-3'>
           <div className='flex justify-end items-center gap-5 h-full font-semibold mr-5'>
-            <Button
-              size='lg'
-              className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer h-14'>
-              Proceed to checkout
-            </Button>
+            {localCart?.items?.length !== 0 && (
+              <Button
+                size='lg'
+                onClick={handleCreateOrder}
+                className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer h-14'>
+                Proceed to checkout
+              </Button>
+            )}
           </div>
         </div>
       </div>
