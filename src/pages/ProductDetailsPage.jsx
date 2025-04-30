@@ -23,7 +23,7 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
   const { data, isFetching } = useProductsByIdQuery({ id });
-  const [addToCart, { data: cartItem, isSuccess, isError, error }] =
+  const [addToCart, { isSuccess, isLoading, isError, error }] =
     useAddToCartMutation();
   const cart = useSelector((state) => state?.cartSlice?.cart);
   const cartId = cart?.id;
@@ -161,7 +161,11 @@ const ProductDetailsPage = () => {
                 <Button
                   className='h-14 rounded-l-none bg-black hover:bg-black/90 cursor-pointer uppercase tracking-widest'
                   onClick={handleAddToCart}>
-                  Add to Card
+                  {isLoading
+                    ? "Adding..."
+                    : isSuccess
+                    ? "Added"
+                    : "Add to Cart"}
                 </Button>
               </div>
               <div className='font-montserrat text-[14px]'>

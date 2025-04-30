@@ -1,8 +1,8 @@
 import { Play, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+
 import Image from "../../assets/images/shop-14-img.jpg";
 import { Button } from "../ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Table,
   TableBody,
@@ -17,69 +17,41 @@ import {
 } from "@/redux/features/cart/cartApi";
 import { Skeleton } from "../ui/skeleton";
 import { useCreateOrderMutation } from "@/redux/features/order/orderApi";
+import {
+  deleteItem,
+  updateItemQuantity,
+} from "@/redux/features/cart/cartSlice";
 
 const CartDetails = () => {
-  const cart = useSelector((state) => state.cartSlice);
-  const [localCart, setLocalCart] = useState(cart.cart);
+  const [createOrder] = useCreateOrderMutation();
+  const { cart } = useSelector((state) => state.cartSlice);
+
   const [updateCartItem] = useUpdateCartItemMutation();
   const [deleteCartItem] = useDeleteCartItemMutation();
-  const [createOrder] = useCreateOrderMutation();
-  useEffect(() => {
-    setLocalCart(cart.cart);
-  }, [cart]);
-
-  // Function to calculate total price based on items
-  const calculateTotalPrice = (items) => {
-    return items.reduce(
-      (total, item) => total + item.flower.price * item.quantity,
-      0
-    );
-  };
-
+  const dispatch = useDispatch();
+  // Handle Update Quantity
   const handleUpdateCartItem = async (itemId, quantity) => {
     // Prevent quantity from going below 1
     if (quantity < 1) return;
-
-    const prevLocalCopy = { ...localCart };
-    // update local state
-    const updatedItems = localCart.items.map((item) =>
-      item.id === itemId ? { ...item, quantity } : item
-    );
-    setLocalCart({
-      ...localCart,
-      items: updatedItems,
-      total_price: calculateTotalPrice(updatedItems), // Update total price locally
-    });
-
+    dispatch(updateItemQuantity({ itemId, quantity }));
     try {
-      const { id: cartId } = cart.cart;
+      const { id: cartId } = cart;
       const data = { quantity };
       await updateCartItem({ cartId, itemId, data }).unwrap();
     } catch (error) {
       console.log("error updating quantity", error);
-      // Revert to previous state on error
-      setLocalCart(prevLocalCopy);
     }
   };
-
+  // Handle Delete Item's
   const handleDeleteCartItem = async (itemId) => {
-    const prevLocalCopy = { ...localCart };
-
-    // delete local state
-    const deletedItems = localCart.items.filter((item) => item.id !== itemId);
-    setLocalCart({
-      ...localCart,
-      items: deletedItems,
-      total_price: calculateTotalPrice(deletedItems), // Update total price locally
-    });
+    dispatch(deleteItem(itemId));
 
     try {
-      const { id: cartId } = cart.cart;
+      const { id: cartId } = cart;
 
       await deleteCartItem({ cartId, itemId });
     } catch (error) {
       console.log("error deleting quantity", error);
-      setLocalCart(prevLocalCopy);
     }
   };
 
@@ -105,14 +77,14 @@ const CartDetails = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {localCart?.items?.length === 0 && (
+            {Object.keys(cart).length === 0 && (
               <TableRow className='font-semibold h-24'>
                 <TableCell colSpan={4} className='bg-red-200 text-center'>
                   There is No Items in your cart
                 </TableCell>
               </TableRow>
             )}
-            {Object.keys(localCart).length === 0
+            {cart?.items?.length === 0
               ? [...Array(4)].map((_, idx) => (
                   <TableRow key={idx}>
                     <TableCell className='font-medium w-[200px]'>
@@ -139,7 +111,7 @@ const CartDetails = () => {
                     </TableCell>
                   </TableRow>
                 ))
-              : localCart?.items?.map((item) => (
+              : cart?.items?.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className='font-medium w-[200px]'>
                       <div className='flex gap-3 justify-start items-center h-full'>
@@ -202,10 +174,10 @@ const CartDetails = () => {
               <TableCell />
               <TableCell className='text-end'>Total Price :</TableCell>
               <TableCell className='text-center'>
-                {Object.keys(localCart).length === 0 ? (
+                {cart?.items?.length === 0 ? (
                   <Skeleton className='h-5 w-24 mx-auto' />
                 ) : (
-                  <p>$ {localCart?.total_price?.toFixed(2)}</p>
+                  <p>$ {cart?.total_price?.toFixed(2)}</p>
                 )}
               </TableCell>
             </TableRow>
@@ -213,7 +185,7 @@ const CartDetails = () => {
         </Table>
         <div className='h-12 font-montserrat my-3'>
           <div className='flex justify-end items-center gap-5 h-full font-semibold mr-5'>
-            {localCart?.items?.length !== 0 && (
+            {cart?.items?.length !== 0 && (
               <Button
                 size='lg'
                 onClick={handleCreateOrder}
