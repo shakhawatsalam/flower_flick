@@ -17,10 +17,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import ChartSheet from "./ChartSheet";
@@ -87,7 +83,9 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='font-montserrat'>
                   <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to='/dashboard'>Dashboard</Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Link to='/orders'>My Orders</Link>
                   </DropdownMenuItem>

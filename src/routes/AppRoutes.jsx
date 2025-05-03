@@ -1,8 +1,13 @@
+import DashboardLayout from "@/layouts/DashboardLayout";
 import MainLayout from "@/layouts/MainLayout";
 import AboutPage from "@/pages/AboutPage";
 import ActivateAccountPage from "@/pages/ActivateAccountPage";
 import BlogPage from "@/pages/BlogPage";
 import CartPage from "@/pages/CartPage";
+import DashboardCategories from "@/pages/Dashboard/DashboardCategories";
+import DashboardFlower from "@/pages/Dashboard/DashboardFlower";
+import DashboardHome from "@/pages/Dashboard/DashboardHome";
+import DashboardOrders from "@/pages/Dashboard/DashboardOrders";
 import EmailCheckPage from "@/pages/EmailCheckPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
@@ -62,6 +67,12 @@ const AppRoutes = () => {
         <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
         <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />
+      </Route>
+      <Route element={<DashboardLayout />}>
+        <Route path='/dashboard' element={<DashboardHome />} />
+        <Route path='/dashboard/flowers' element={<DashboardFlower />} />
+        <Route path='/dashboard/categories' element={<DashboardCategories />} />
+        <Route path='/dashboard/orders' element={<DashboardOrders />} />
       </Route>
     </Routes>
   );

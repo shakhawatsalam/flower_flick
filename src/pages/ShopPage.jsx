@@ -7,24 +7,22 @@ import { useCategoriesQuery } from "@/redux/features/category/categoryApi";
 import { useProductsQuery } from "@/redux/features/product/productApi";
 import { useState } from "react";
 
-
 const ShopPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [priceRange, setPriceRange] = useState([0, 100]);
-    const [sortValue, setSortValue] = useState("");
-    const [page, setPage] = useState(1);
-    const debouncedSearchTerm = useDebounce(searchTerm, 1000);
-    const debouncedPriceRange = useDebounce(priceRange, 500);
-    const { data: flowers, isFetching } = useProductsQuery({
-      searchTerm: debouncedSearchTerm,
-      categories: selectedCategory,
-      priceRange: debouncedPriceRange,
-      sortValue: sortValue,
-      page: page,
-    });
-    const { data: categories } = useCategoriesQuery();
-
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [sortValue, setSortValue] = useState("");
+  const [page, setPage] = useState(1);
+  const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+  const debouncedPriceRange = useDebounce(priceRange, 500);
+  const { data: flowers, isFetching } = useProductsQuery({
+    searchTerm: debouncedSearchTerm,
+    categories: selectedCategory,
+    priceRange: debouncedPriceRange,
+    sortValue: sortValue,
+    page: page,
+  });
+  const { data: categories } = useCategoriesQuery();
 
   return (
     <>
