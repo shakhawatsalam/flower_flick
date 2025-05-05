@@ -67,7 +67,7 @@ export function DataTable({
         </TableHeader>
         <TableBody>
           {isFetching || isLoading ? (
-            Array(4)
+            Array(10)
               .fill(null)
               .map((_, index) => (
                 <TableRow key={index}>

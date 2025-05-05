@@ -39,7 +39,7 @@ const FilterproductSection = ({
     setSearchTerm("");
     setSelectedCategory("");
     setSortValue("");
-    setPriceRange([0, 100]);
+    setPriceRange(["", ""]);
   };
 
   return (
@@ -80,12 +80,13 @@ const FilterproductSection = ({
             <div className='flex justify-between'>
               <h5 className='mb-9'>Price</h5>
               <p className='text-gray-500'>
-                ${priceRange[0]} — ${priceRange[1]}
+                ${priceRange[0] ? priceRange[0] : 0} — $
+                {priceRange[1] ? priceRange[1] : 1000}
               </p>
             </div>
             <div>
               <Slider
-                defaultValue={[priceRange[0], priceRange[1]]}
+                defaultValue={[0, 100]}
                 min={0}
                 max={100}
                 onValueChange={(newValue) => {

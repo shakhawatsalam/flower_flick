@@ -1,5 +1,5 @@
 import { useDebounce } from "@/hooks/useDebounce";
-import { useCategoriesQuery } from "@/redux/features/category/categoryApi";
+import { useGetAllCategoriesQuery } from "@/redux/features/category/categoryApi";
 import { useProductsQuery } from "@/redux/features/product/productApi";
 import React, { useState } from "react";
 import FilterproductSection from "./FilterproductSection";
@@ -20,7 +20,7 @@ export const ProductListWithFilter = () => {
     sortValue: sortValue,
     page: page,
   });
-  const { data: categories } = useCategoriesQuery();
+  const { data: categories } = useGetAllCategoriesQuery();
   return (
     <>
       <FilterproductSection

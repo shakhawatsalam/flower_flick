@@ -8,8 +8,14 @@ import {
   SquarePen,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import CreateFlowerDialog from "@/components/Dialog/CreateFlowerDialog";
+import DeleteFlowerDialog from "@/components/Dialog/DeleteFlowerDialog";
+import EditFlowerDialog from "@/components/Dialog/EditFlowerDialog";
+// "react-confetti-explosion": "^2.1.2",
 // eslint-disable-next-line react-refresh/only-export-components
 export const columns = [
   {
@@ -61,15 +67,25 @@ export const columns = [
   {
     id: "actions",
     header: () => <div className='text-center'>Action</div>,
-    cell: () => {
+    cell: ({ row }) => {
       return (
         <div className='flex flex-row justify-center gap-3'>
-          <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer'>
-            <Trash2 />
-          </Button>
-          <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer'>
-            <SquarePen />
-          </Button>
+          <Dialog>
+            <DialogTrigger>
+              <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer'>
+                <Trash2 />
+              </Button>
+            </DialogTrigger>
+            <DeleteFlowerDialog flower={row.original} />
+          </Dialog>
+          <Dialog>
+            <DialogTrigger>
+              <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer'>
+                <SquarePen />
+              </Button>
+            </DialogTrigger>
+            <EditFlowerDialog flower={row.original} />
+          </Dialog>
         </div>
       );
     },
@@ -77,18 +93,18 @@ export const columns = [
 ];
 
 const DashboardFlower = () => {
+  const [open, setOpen] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 4, // match your backend's page size
+    pageSize: 4,
   });
   const [sorting, setSorting] = useState([]);
   const sortValue =
     sorting.length > 0 ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}` : "";
-  console.log(sortValue);
   const { data, isFetching, isLoading } = useProductsQuery({
     searchTerm: "",
     categories: "",
-    priceRange: [0, 100],
+    priceRange: ["", ""],
     sortValue,
     page: pagination.pageIndex + 1,
   });
@@ -106,9 +122,14 @@ const DashboardFlower = () => {
             </p>
           </div>
           <div>
-            <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer uppercase'>
-              Create Product
-            </Button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer uppercase'>
+                  Create Product
+                </Button>
+              </DialogTrigger>
+              <CreateFlowerDialog setOpen={setOpen} />
+            </Dialog>
           </div>
         </div>
       </div>
