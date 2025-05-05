@@ -13,7 +13,8 @@ import {
 } from "@/redux/features/order/orderApi";
 import { Button } from "../ui/button";
 const OrderDetails = () => {
-  const { data, refetch } = useGetOrderQuery();
+  const { data } = useGetOrderQuery();
+  console.log(data);
   const [paymentInitiate, { isLoading }] = usePaymentInitiateMutation();
 
   const handlePayment = async (amount, orderId) => {

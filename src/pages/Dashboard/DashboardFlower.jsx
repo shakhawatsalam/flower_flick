@@ -9,8 +9,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import CreateFlowerDialog from "@/components/Dialog/CreateFlowerDialog";
 import DeleteFlowerDialog from "@/components/Dialog/DeleteFlowerDialog";
@@ -121,6 +119,7 @@ const DashboardFlower = () => {
               Where flowers are our inspiration
             </p>
           </div>
+
           <div>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>

@@ -55,7 +55,7 @@ const CartSheet = () => {
   return (
     <SheetContent className='transition-all duration-300 font-montserrat w-[400px]'>
       <div className='flex justify-center font-semibold text-white bg-[#F34F3F] mt-16 p-3'>
-        <p>My Cart ({cart?.items.length})</p>
+        <p>My Cart ({cart ? cart?.items?.length : 0})</p>
       </div>
 
       <div className='bg-white h-full p-4 space-y-4'>

@@ -14,6 +14,7 @@ const orderApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["CART"],
     }),
     paymentInitiate: builder.mutation({
       query: (data) => ({

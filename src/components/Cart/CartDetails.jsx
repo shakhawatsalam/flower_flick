@@ -19,6 +19,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useCreateOrderMutation } from "@/redux/features/order/orderApi";
 import {
   deleteItem,
+  removeCart,
   updateItemQuantity,
 } from "@/redux/features/cart/cartSlice";
 
@@ -57,8 +58,13 @@ const CartDetails = () => {
 
   const handleCreateOrder = async () => {
     try {
-      const { id: cartId } = cart.cart;
-      await createOrder({ cart_id: cartId }).unwrap();
+      const { id: cartId } = cart;
+      const createOrderResponse = await createOrder({
+        cart_id: cartId,
+      }).unwrap();
+      if (createOrderResponse) {
+        dispatch(removeCart());
+      }
     } catch (error) {
       console.log("Error Creating Order", error);
     }
@@ -77,14 +83,15 @@ const CartDetails = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Object.keys(cart).length === 0 && (
+            {cart?.items?.length === 0 && (
               <TableRow className='font-semibold h-24'>
-                <TableCell colSpan={4} className='bg-red-200 text-center'>
+                <TableCell colSpan={4} className='text-center'>
                   There is No Items in your cart
                 </TableCell>
               </TableRow>
             )}
-            {cart?.items?.length === 0
+
+            {Object.keys(cart).length === 0
               ? [...Array(4)].map((_, idx) => (
                   <TableRow key={idx}>
                     <TableCell className='font-medium w-[200px]'>
@@ -174,7 +181,7 @@ const CartDetails = () => {
               <TableCell />
               <TableCell className='text-end'>Total Price :</TableCell>
               <TableCell className='text-center'>
-                {cart?.items?.length === 0 ? (
+                {Object.keys(cart).length === 0 ? (
                   <Skeleton className='h-5 w-24 mx-auto' />
                 ) : (
                   <p>$ {cart?.total_price?.toFixed(2)}</p>

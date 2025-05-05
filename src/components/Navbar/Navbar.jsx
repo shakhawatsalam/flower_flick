@@ -11,14 +11,9 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import ChartSheet from "./ChartSheet";
 
 const navItems = [
@@ -67,7 +62,7 @@ const Navbar = () => {
                     <div className='relative cursor-pointer'>
                       <ShoppingCart size={25} className='text-gray-700' />
                       <span className='absolute -top-2 -right-2 bg-[#F34F3F] text-white text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full p-2'>
-                        {cart?.items.length}
+                        {cart ? cart?.items?.length : 0}
                       </span>
                     </div>
                   </SheetTrigger>
