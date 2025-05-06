@@ -24,6 +24,8 @@ import { getFromLocalStorage } from "@/utils/local_sotrage";
 import { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router";
+import PrivateRoute from "./PrivateRoute";
+import AdminRoute from "./AdminRoute";
 
 const AppRoutes = () => {
   const { data: userData } = useFetchUserProfileQuery(undefined, {
@@ -59,16 +61,29 @@ const AppRoutes = () => {
         <Route path='/shop' element={<ShopPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/blog' element={<BlogPage />} />
-        <Route path='/cart' element={<CartPage />} />
-        <Route path='/orders' element={<OrderPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
-        <Route path='/payment-success/' element={<PaymentSuccess />} />
-        <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
-        <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />
       </Route>
-      <Route element={<DashboardLayout />}>
+      {/* Protected routes with MainLayout inside PrivateRoute */}
+      <Route
+        element={
+          <PrivateRoute>
+            <MainLayout />
+          </PrivateRoute>
+        }>
+        <Route path='/cart' element={<CartPage />} />
+        <Route path='/orders' element={<OrderPage />} />
+        <Route path='/payment-success' element={<PaymentSuccess />} />
+        <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
+        <Route path='/check-email' element={<EmailCheckPage />} />
+      </Route>
+      <Route
+        element={
+          <AdminRoute>
+            <DashboardLayout />
+          </AdminRoute>
+        }>
         <Route path='/dashboard' element={<DashboardHome />} />
         <Route path='/dashboard/flowers' element={<DashboardFlower />} />
         <Route path='/dashboard/categories' element={<DashboardCategories />} />

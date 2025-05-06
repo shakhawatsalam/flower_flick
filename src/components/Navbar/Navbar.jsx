@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { AlignJustify, ShoppingCart, X } from "lucide-react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "../ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 import {
@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import ChartSheet from "./ChartSheet";
+import { addUser } from "@/redux/features/user/userSlice";
+import { removeCart } from "@/redux/features/cart/cartSlice";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -27,6 +29,15 @@ const Navbar = () => {
   const { user } = useSelector((state) => state.userSlice);
   const { cart } = useSelector((state) => state.cartSlice);
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    dispatch(addUser(null));
+    dispatch(removeCart());
+    navigate("/login");
+  };
 
   return (
     <nav className='relative z-50 shadow-md'>
@@ -62,7 +73,7 @@ const Navbar = () => {
                     <div className='relative cursor-pointer'>
                       <ShoppingCart size={25} className='text-gray-700' />
                       <span className='absolute -top-2 -right-2 bg-[#F34F3F] text-white text-xs font-semibold w-5 h-5 flex items-center justify-center rounded-full p-2'>
-                        {cart ? cart?.items?.length : 0}
+                        {cart?.items?.length ? cart?.items?.length : 0}
                       </span>
                     </div>
                   </SheetTrigger>
@@ -78,13 +89,19 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='font-montserrat'>
                   <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link to='/dashboard'>Dashboard</Link>
-                  </DropdownMenuItem>
+                  {user && user.is_staff && (
+                    <DropdownMenuItem>
+                      <Link to='/dashboard'>Dashboard</Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem>
                     <Link to='/orders'>My Orders</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Log out</DropdownMenuItem>
+                  <DropdownMenuItem
+                    className='cursor-pointer'
+                    onClick={handleLogout}>
+                    Log out
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

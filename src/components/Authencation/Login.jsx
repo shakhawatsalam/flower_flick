@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
   useLazyFetchUserProfileQuery,
   useLogInMutation,
@@ -42,6 +42,7 @@ const formSchema = z.object({
 
 const Login = () => {
   const [logIn, { isLoading }] = useLogInMutation();
+  const location = useLocation();
   const navigate = useNavigate();
   const [getMe] = useLazyFetchUserProfileQuery();
   const dispatch = useDispatch();
@@ -52,7 +53,8 @@ const Login = () => {
       password: "",
     },
   });
-
+  // This is where the user originally tried to go
+  const from = location.state?.from?.pathname || "/";
   async function onSubmit(values) {
     try {
       const loginResponse = await logIn(values).unwrap();
@@ -67,7 +69,7 @@ const Login = () => {
         if (userResponse) {
           console.log("USER DATA =>", userResponse);
           dispatch(addUser(userResponse));
-          navigate("/");
+          navigate(from, { replace: true }); // Redirect to intended route
         }
       }
     } catch (error) {

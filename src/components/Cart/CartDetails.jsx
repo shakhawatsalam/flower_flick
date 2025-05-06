@@ -22,11 +22,12 @@ import {
   removeCart,
   updateItemQuantity,
 } from "@/redux/features/cart/cartSlice";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 
 const CartDetails = () => {
-  const [createOrder] = useCreateOrderMutation();
+  const [createOrder, { isLoading }] = useCreateOrderMutation();
   const { cart } = useSelector((state) => state.cartSlice);
-
+  const debounce = useDebouncedCallback(1000);
   const [updateCartItem] = useUpdateCartItemMutation();
   const [deleteCartItem] = useDeleteCartItemMutation();
   const dispatch = useDispatch();
@@ -35,13 +36,15 @@ const CartDetails = () => {
     // Prevent quantity from going below 1
     if (quantity < 1) return;
     dispatch(updateItemQuantity({ itemId, quantity }));
-    try {
-      const { id: cartId } = cart;
-      const data = { quantity };
-      await updateCartItem({ cartId, itemId, data }).unwrap();
-    } catch (error) {
-      console.log("error updating quantity", error);
-    }
+    const { id: cartId } = cart;
+    const data = { quantity };
+    debounce(itemId, async () => {
+      try {
+        await updateCartItem({ cartId, itemId, data }).unwrap();
+      } catch (error) {
+        console.error("error updating quantity", error);
+      }
+    });
   };
   // Handle Delete Item's
   const handleDeleteCartItem = async (itemId) => {
@@ -83,15 +86,83 @@ const CartDetails = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {cart?.items?.length === 0 && (
+            {/* {cart?.items?.length === 0 && (
+              <TableRow className='font-semibold h-24'>
+                <TableCell colSpan={4} className='text-center'>
+                  There is No Items in your cart
+                </TableCell>
+              </TableRow>
+            )} */}
+            {cart && cart?.items?.length ? (
+              cart?.items?.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className='font-medium w-[200px]'>
+                    <div className='flex gap-3 justify-start items-center h-full'>
+                      <div className='cursor-pointer'>
+                        <X
+                          disabled={isLoading}
+                          size={16}
+                          onClick={() => handleDeleteCartItem(item.id)}
+                        />
+                      </div>
+                      <div className='h-28 w-28'>
+                        <img
+                          src={Image}
+                          alt='image'
+                          className='h-full w-full object-contain'
+                        />
+                      </div>
+                      <h2>{item?.flower?.title}</h2>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <p>{item?.flower?.price}</p>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div className='h-14 text-gray-400 flex items-center justify-between p-3 border border-gray-300'>
+                        <div>
+                          <p className='font-montserrat text-[0.8rem] tracking-wider'>
+                            Quantity
+                          </p>
+                        </div>
+                        <div className='flex justify-center items-center gap-3 p-0.5 font-montserrat'>
+                          <Play
+                            size={11}
+                            fill='#99a1af'
+                            disabled={isLoading}
+                            className='rotate-180 cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
+                            onClick={() =>
+                              handleUpdateCartItem(item.id, item.quantity - 1)
+                            }
+                          />
+                          <span>{item?.quantity}</span>
+                          <Play
+                            size={11}
+                            fill='#99a1af'
+                            disabled={isLoading}
+                            className='cursor-pointer hover:fill-[#F34F3F] hover:text-[#F34F3F] transition-colors duration-200'
+                            onClick={() =>
+                              handleUpdateCartItem(item.id, item.quantity + 1)
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className='text-center'>
+                    $ {(item?.flower?.price * item.quantity).toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
               <TableRow className='font-semibold h-24'>
                 <TableCell colSpan={4} className='text-center'>
                   There is No Items in your cart
                 </TableCell>
               </TableRow>
             )}
-
-            {Object.keys(cart).length === 0
+            {/* {Object.keys(cart).length === 0
               ? [...Array(4)].map((_, idx) => (
                   <TableRow key={idx}>
                     <TableCell className='font-medium w-[200px]'>
@@ -175,29 +246,28 @@ const CartDetails = () => {
                       $ {(item?.flower?.price * item.quantity).toFixed(2)}
                     </TableCell>
                   </TableRow>
-                ))}
+                ))} */}
             <TableRow className='font-semibold h-24'>
               <TableCell />
               <TableCell />
               <TableCell className='text-end'>Total Price :</TableCell>
               <TableCell className='text-center'>
-                {Object.keys(cart).length === 0 ? (
-                  <Skeleton className='h-5 w-24 mx-auto' />
-                ) : (
-                  <p>$ {cart?.total_price?.toFixed(2)}</p>
-                )}
+                <p>
+                  $ {cart?.total_price ? cart?.total_price?.toFixed(2) : "0"}
+                </p>
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
         <div className='h-12 font-montserrat my-3'>
           <div className='flex justify-end items-center gap-5 h-full font-semibold mr-5'>
-            {cart?.items?.length !== 0 && (
+            {cart && cart?.items?.length && (
               <Button
                 size='lg'
+                disabled={isLoading}
                 onClick={handleCreateOrder}
                 className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer h-14'>
-                Proceed to checkout
+                {isLoading ? "Processing..." : "Proceed to checkout"}
               </Button>
             )}
           </div>

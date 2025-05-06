@@ -9,7 +9,8 @@ import { useProductsByIdQuery } from "@/redux/features/product/productApi";
 import { Minus, Play, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
 
 const images = [
   "https://i.ibb.co.com/GTGBw03/image-323.png",
@@ -19,6 +20,7 @@ const images = [
 ];
 
 const ProductDetailsPage = () => {
+  const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
@@ -31,7 +33,7 @@ const ProductDetailsPage = () => {
     skip: !isSuccess,
   });
   const dispatch = useDispatch();
-
+  console.log(cart);
   // Handle quantity increment
   const handleIncrement = () => {
     if (quantity < data?.quantity) {
@@ -48,6 +50,14 @@ const ProductDetailsPage = () => {
   const handleAddToCart = async () => {
     if (!cartId) {
       console.error("No cart ID available. Cannot add to cart.");
+      toast("Login Required", {
+        description: "You must be logged in to add items to the cart.",
+        action: {
+          label: "Login",
+          onClick: () => navigate("/login"),
+        },
+      });
+
       return;
     }
     try {
