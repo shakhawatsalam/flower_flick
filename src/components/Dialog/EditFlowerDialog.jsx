@@ -37,7 +37,6 @@ import { useGetAllCategoriesQuery } from "@/redux/features/category/categoryApi"
 import {
   useDeleteFlowerImageMutation,
   useGetFlowerImageQuery,
-  useProductsByIdQuery,
   useUpdateFlowerMutation,
   useUploadFlowerImageMutation,
 } from "@/redux/features/product/productApi";

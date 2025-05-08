@@ -3,7 +3,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://127.0.0.1:8000/api/v1",
+    // eslint-disable-next-line no-undef
+    baseUrl: import.meta.env.VITE_BASE_API,
     prepareHeaders: (headers) => {
       // Retrieve the JWT token from localStorage
       const token = localStorage.getItem("authToken");

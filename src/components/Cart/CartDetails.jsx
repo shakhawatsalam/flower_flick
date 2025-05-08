@@ -107,7 +107,7 @@ const CartDetails = () => {
                       </div>
                       <div className='h-28 w-28'>
                         <img
-                          src={Image}
+                          src={item?.flower?.images[0]?.image}
                           alt='image'
                           className='h-full w-full object-contain'
                         />

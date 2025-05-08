@@ -12,144 +12,167 @@ import Autoplay from "embla-carousel-autoplay";
 import Fade from "embla-carousel-fade";
 import { motion } from "motion/react";
 import { useState } from "react";
+
 const imageCarousel = [
   {
     src: imageOne,
     alt: "image ",
+    title: "Send flowers like you mean it.",
+    description:
+      "Where flowers are our inspiration to create lasting memories. Whatever the occasion, our flowers will make it special.",
   },
   {
     src: imageTwo,
     alt: "image ",
+    title: "Bloom with elegance.",
+    description:
+      "Discover the perfect arrangement for every moment. Let our flowers speak the language of your heart.",
   },
   {
     src: imageThree,
     alt: "image",
+    title: "Nature's finest gifts.",
+    description:
+      "Experience the beauty of carefully curated floral arrangements that capture life's most precious moments.",
   },
 ];
+
 const HeroCarousel = () => {
   const [api, setApi] = useState(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleSelect = () => {
+    if (api) {
+      setCurrentIndex(api.selectedScrollSnap());
+    }
+  };
+
   return (
-    <div className='relative w-full mb-14'>
+    <div className='relative w-full mb-14 overflow-hidden'>
       <Carousel
         setApi={setApi}
         opts={{
           loop: true,
           duration: 30,
         }}
+        onSelect={handleSelect}
         plugins={[
           Autoplay({
             delay: 5000,
-            // playOnInit: true,
             stopOnInteraction: false,
           }),
           Fade(),
         ]}>
-        <CarouselContent className='h-[75vh]'>
+        <CarouselContent className='h-[85vh]'>
           {imageCarousel.map((image, idx) => (
             <CarouselItem key={idx} className='relative h-full'>
               <div className='h-full w-full'>
                 <motion.img
                   src={image.src}
                   alt={image.alt}
-                  initial={{ scale: 1 }}
-                  whileInView={{ scale: 1.5 }}
-                  viewport={{ amount: 0.1 }}
-                  // viewport={{ once: true }}
-                  transition={{ duration: 5, ease: "linear" }}
-                  className='h-full w-full object-top-left rounded-none'
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 8, ease: "linear" }}
+                  className='h-full w-full object-cover'
                 />
               </div>
-              {/* Optional overlay content */}
-              <div className='absolute inset-0 bg-gradient-to-r from-[#F3F3F3] from-40% to-transparent to-100% flex items-center justify-center' />
-              <div className='absolute container max-w-7xl mx-auto inset-0 flex flex-col items-start justify-center p-5 lg:p-5'>
-                <div className='max-w-[350px] md:max-w-lg'>
-                  <h2 className='text-black text-4xl md:text-6xl tracking-wide font-playfair'>
-                    Send <span className='text-[#F34F3F]'>flowers</span> like{" "}
-                    <br />
-                    you mean it.
-                  </h2>
-                  <p className='mt-10 text-gray-700 font-lora md:text-lg text-[14px] font-thin'>
-                    Where flowera are our inspiratin to create lasting memories.
-                    Whatever the occasion, our flowers will make it special
-                    cursus a sit amet mauris.
-                  </p>
+
+              {/* Enhanced overlay with gradient */}
+              <div className='absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent' />
+
+              {/* Content container with animation */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className='absolute container max-w-7xl mx-auto inset-0 flex flex-col items-start justify-center p-5 lg:p-5'>
+                <div className='max-w-[400px] md:max-w-xl'>
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className='text-white text-4xl md:text-6xl lg:text-7xl tracking-wide font-playfair leading-tight'>
+                    {image.title.split(" ").map((word, i) => (
+                      <span
+                        key={i}
+                        className={word === "flowers" ? "text-[#F34F3F]" : ""}>
+                        {word}{" "}
+                      </span>
+                    ))}
+                  </motion.h2>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className='mt-8 text-gray-200 font-lora md:text-lg text-base font-light leading-relaxed'>
+                    {image.description}
+                  </motion.p>
+
+                  {/* CTA Button */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.8 }}
+                    className='mt-10'>
+                    <button className='bg-[#F34F3F] hover:bg-[#d8200e] text-white px-8 py-4 rounded-lg text-lg font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg cursor-pointer'>
+                      Shop Now
+                    </button>
+                  </motion.div>
                 </div>
-              </div>
+              </motion.div>
             </CarouselItem>
           ))}
         </CarouselContent>
 
-        <div className='absolute inset-0 hidden lg:flex justify-between  p-5 '>
-          <button className='cursor-pointer' onClick={() => api.scrollPrev()}>
+        {/* Enhanced Navigation Buttons */}
+        <div className='absolute inset-0 hidden lg:flex justify-between items-center p-5'>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className='cursor-pointer bg-white/10 backdrop-blur-sm p-4 rounded-full hover:bg-white/20 transition-all duration-300'
+            onClick={() => api.scrollPrev()}>
             <svg
-              className='text-gray-400 hover:text-gray-700 transition-all duration-200 '
-              xmlns:x='http://ns.adobe.com/Extensibility/1.0/'
-              xmlns:i='http://ns.adobe.com/AdobeIllustrator/10.0/'
-              xmlns:graph='http://ns.adobe.com/Graphs/1.0/'
+              className='text-white w-8 h-8'
               xmlns='http://www.w3.org/2000/svg'
-              xmlns:xlink='http://www.w3.org/1999/xlink'
-              x='0px'
-              y='0px'
-              width='60px'
-              height='16.667px'
-              viewBox='0 0 75.417 16.667'
-              enable-background='new 0 0 75.417 16.667'
-              xml:space='preserve'>
-              <line
-                fill='none'
-                stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-miterlimit='10'
-                x1='1.681'
-                y1='7.817'
-                x2='73.257'
-                y2='7.817'></line>
-              <polyline
-                fill='none'
-                stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-                stroke-miterlimit='10'
-                points='8.235,1.351 1.681,7.817 8.235,15.316'></polyline>
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <path d='M15 18l-6-6 6-6' />
             </svg>
-          </button>
-          <button className='cursor-pointer' onClick={() => api.scrollNext()}>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className='cursor-pointer bg-white/10 backdrop-blur-sm p-4 rounded-full hover:bg-white/20 transition-all duration-300'
+            onClick={() => api.scrollNext()}>
             <svg
-              className='text-gray-400 hover:text-gray-700 transition-all duration-200'
-              xmlns:x='http://ns.adobe.com/Extensibility/1.0/'
-              xmlns:i='http://ns.adobe.com/AdobeIllustrator/10.0/'
-              xmlns:graph='http://ns.adobe.com/Graphs/1.0/'
+              className='text-white w-8 h-8'
               xmlns='http://www.w3.org/2000/svg'
-              xmlns:xlink='http://www.w3.org/1999/xlink'
-              x='0px'
-              y='0px'
-              width='60px'
-              height='16.667px'
-              viewBox='0 0 75.417 16.667'
-              enable-background='new 0 0 75.417 16.667'
-              xml:space='preserve'>
-              <line
-                fill='none'
-                stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-miterlimit='10'
-                x1='1.681'
-                y1='7.817'
-                x2='73.257'
-                y2='7.817'></line>
-              <polyline
-                fill='none'
-                stroke='currentColor'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-                stroke-miterlimit='10'
-                points='67.235,1.351 73.985,7.817 67.235,15.316'></polyline>
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'>
+              <path d='M9 18l6-6-6-6' />
             </svg>
-          </button>
+          </motion.button>
+        </div>
+
+        {/* Slide Indicators */}
+        <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3'>
+          {imageCarousel.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => api?.scrollTo(idx)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                currentIndex === idx ? "bg-[#F34F3F] w-8" : "bg-white/50"
+              }`}
+            />
+          ))}
         </div>
       </Carousel>
     </div>

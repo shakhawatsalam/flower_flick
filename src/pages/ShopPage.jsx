@@ -43,7 +43,7 @@ const ShopPage = () => {
         setPage={setPage}
         flowers={flowers}
         isFetching={isFetching}
-        totalPages={Math.ceil((flowers?.count || 0) / 4)}
+        totalPages={Math.ceil((flowers?.count || 0) / 8)}
       />
     </>
   );

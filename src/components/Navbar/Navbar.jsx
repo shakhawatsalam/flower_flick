@@ -82,18 +82,23 @@ const Navbar = () => {
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Avatar className='cursor-pointer'>
-                    <AvatarImage src='https://github.com/shadcn.png' />
-                    <AvatarFallback>CN</AvatarFallback>
+                  <Avatar className='cursor-pointer bg-[#F34F3F] text-white flex justify-center items-center font-semibold'>
+                    {user?.first_name[0] || user?.email?.[0]}
+                    {user?.last_name[0] || ""}
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className='font-montserrat'>
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link to='/profile'>Profile</Link>
+                  </DropdownMenuItem>
                   {user && user.is_staff && (
                     <DropdownMenuItem>
                       <Link to='/dashboard'>Dashboard</Link>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem>
+                    <Link to='/cart'>My Cart</Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Link to='/orders'>My Orders</Link>
                   </DropdownMenuItem>
@@ -151,7 +156,7 @@ const Navbar = () => {
               }}
             /> */}
             {/* Overlay tint */}
-            <div className='absolute inset-0 bg-gradient-to-br from-[#F3B6C1] from-30% to-transparent to-100% z-0' />
+            <div className='absolute inset-0 bg-gradient-to-br from-[#F3B6C1] from-70% to-transparent to-100% z-0' />
 
             {/* Links */}
             <div className='relative z-10 flex flex-col items-center py-6 space-y-4 font-montserrat'>

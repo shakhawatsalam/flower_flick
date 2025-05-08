@@ -35,6 +35,13 @@ const authApi = baseApi.injectEndpoints({
         url: `/auth/users/me`,
       }),
     }),
+    updateUserProfile: builder.mutation({
+      query: (data) => ({
+        url: `/auth/users/me/`,
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -43,6 +50,7 @@ export const {
   useLazyFetchUserProfileQuery,
   useSignUpMutation,
   useFetchUserProfileQuery,
+  useUpdateUserProfileMutation,
   useResendActivationMutation,
   useUserActivationMutation
 } = authApi;

@@ -11,7 +11,7 @@ const HomePage = () => {
   const { data: flowers, isFetching } = useProductsQuery({
     searchTerm: "",
     categories: "",
-    priceRange: [0, 100],
+    priceRange: ["", ""],
     sortValue: "",
     page: "",
   });

@@ -10,16 +10,15 @@ import {
   updateItemQuantity,
 } from "@/redux/features/cart/cartSlice";
 import { X } from "lucide-react";
-import { useRef } from "react";
 import { Button } from "../ui/button";
 import { Link } from "react-router";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
 const CartSheet = () => {
   const { cart } = useSelector((state) => state.cartSlice);
-  const debounceTimeouts = useRef({});
+
   const [updateCartItem] = useUpdateCartItemMutation();
   const [deleteCartItem] = useDeleteCartItemMutation();
- const debounce = useDebouncedCallback(1000);
+  const debounce = useDebouncedCallback(1000);
   const dispatch = useDispatch();
   // Handle Update Quantity
   const handleUpdateCartItem = (itemId, quantity) => {
@@ -37,20 +36,6 @@ const CartSheet = () => {
         console.error("error updating quantity", error);
       }
     });
-
-    // // Clear existing timeout if user changes quantity quickly
-    // if (debounceTimeouts.current[itemId]) {
-    //   clearTimeout(debounceTimeouts.current[itemId]);
-    // }
-
-    // // Set new timeout for API call
-    // debounceTimeouts.current[itemId] = setTimeout(async () => {
-    //   try {
-    //     await updateCartItem({ cartId, itemId, data }).unwrap();
-    //   } catch (error) {
-    //     console.error("error updating quantity", error);
-    //   }
-    // }, 1000);
   };
   // Handle Delete Item's
   const handleDeleteCartItem = async (itemId) => {
@@ -77,7 +62,7 @@ const CartSheet = () => {
               key={item.id}
               className='flex items-center gap-4 border p-3 rounded-md shadow-sm'>
               <img
-                src={flowerImage}
+                src={item?.flower?.images[0]?.image}
                 alt=''
                 className='w-20 h-20 object-cover rounded-md'
               />

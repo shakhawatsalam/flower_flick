@@ -32,6 +32,7 @@ const ProductDetailsPage = () => {
   const { data: updatedCart, refetch } = useGetCartQuery({
     skip: !isSuccess,
   });
+  console.log(data?.images[0]?.image);
   const dispatch = useDispatch();
   console.log(cart);
   // Handle quantity increment
@@ -94,7 +95,7 @@ const ProductDetailsPage = () => {
             <div className='flex flex-col-reverse gap-[15px] md:gap-0 md:flex-row'>
               {/* Thumbnails */}
               <div className='w-full md:w-[20%] flex flex-row md:flex-col md:gap-4 max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 md:pr-2'>
-                {images?.map((image, index) => (
+                {data?.images?.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
@@ -104,9 +105,9 @@ const ProductDetailsPage = () => {
                         : "border-transparent"
                     }`}>
                     <img
-                      src={image}
+                      src={image?.image}
                       alt={`Product ${index + 1}`}
-                      className='object-cover'
+                      className='object-cover cursor-pointer'
                     />
                   </button>
                 ))}
@@ -115,9 +116,9 @@ const ProductDetailsPage = () => {
               {/* Main image */}
               <div className='w-full md:w-[80%] bg-gray-100 rounded-sm h-[280px] md:h-[500px] relative flex items-center justify-center'>
                 <img
-                  src={images[selectedImage]}
+                  src={data?.images[selectedImage]?.image}
                   alt='Product main image'
-                  className='object-cover w-[200px] md:w-[300px] rounded-lg '
+                  className='object-cover h-full w-full  rounded-lg '
                 />
               </div>
             </div>
@@ -179,7 +180,7 @@ const ProductDetailsPage = () => {
                 </Button>
               </div>
               <div className='font-montserrat text-[14px]'>
-                Stock: {data.quantity}
+                Stock: {data?.quantity}
               </div>
             </div>
           </div>

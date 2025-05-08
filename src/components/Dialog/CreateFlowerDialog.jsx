@@ -34,6 +34,7 @@ import {
 } from "@/redux/features/product/productApi";
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import { toast } from "sonner";
 const formSchema = z.object({
   title: z.string().nonempty({ message: "Title is required." }),
   description: z.string().nonempty({ message: "Description is required." }),
@@ -94,13 +95,14 @@ const CreateFlowerDialog = ({ setOpen }) => {
         formData.append("image", image);
         await uploadFlowerImage({ flowerId, data: formData }).unwrap();
       }
-      alert("Images uploaded successfully!");
+      toast.success("Images uploaded successfully!");
       setImages([]);
       setFlowerId(null); // Reset to go back to form step
       form.reset(); // ✅ Reset all fields
       setOpen(false);
     } catch (err) {
       console.error("Image upload failed", err);
+      toast.error("Image upload failed");
     }
   };
   // remove Image

@@ -11,7 +11,7 @@ const NewsletterSignup = () => {
       bgImageAlt='the cat'
       strength={400}
       className='mb-16'>
-      <div className='h-72 md:h-[400px] flex justify-center items-center'>
+      <div className='h-72 md:h-[400px] flex justify-center items-center '>
         <div className='md:w-[550px] w-96 flex'>
           <Input
             className='bg-[#FFFFFF] md:h-16 h-12 focus-visible:border-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-r-none'

@@ -57,7 +57,7 @@ const ProductList = ({ flowers, page, setPage, totalPages, isFetching }) => {
                     className='group flex flex-col gap-2 justify-center items-center w-72 rounded font-montserrat'>
                     <div className='w-full h-full rounded overflow-hidden'>
                       <img
-                        src={flowerImage}
+                        src={item?.images[0]?.image}
                         alt='fImage'
                         className='w-full h-full rounded group-hover:scale-105 transition-all duration-200'
                       />

@@ -26,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
+import ProfilePage from "@/pages/ProfilePage";
 
 const AppRoutes = () => {
   const { data: userData } = useFetchUserProfileQuery(undefined, {
@@ -77,6 +78,7 @@ const AppRoutes = () => {
         <Route path='/payment-success' element={<PaymentSuccess />} />
         <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
         <Route path='/check-email' element={<EmailCheckPage />} />
+        <Route path='/profile' element={<ProfilePage />} />
       </Route>
       <Route
         element={
