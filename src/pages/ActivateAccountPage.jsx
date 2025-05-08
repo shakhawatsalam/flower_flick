@@ -1,7 +1,8 @@
 import { useUserActivationMutation } from "@/redux/features/auth/authApi";
 import React, { useEffect } from "react";
+import ConfettiExplosion from "react-confetti-blast";
 import { useNavigate, useParams } from "react-router";
-import ConfettiExplosion from "react-confetti-explosion";
+
 const ActivateAccountPage = () => {
   const { uid, token } = useParams();
   const [userActivation, { status }] = useUserActivationMutation();

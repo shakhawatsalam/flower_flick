@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import React from "react";
-import ConfettiExplosion from "react-confetti-explosion";
+import ConfettiExplosion from "react-confetti-blast";
+
 import { Link } from "react-router";
 
 const PaymentSuccess = () => {
