@@ -8,13 +8,20 @@ import { ProductListWithFilter } from "@/components/Shop/ProductListWithFilter";
 import { useProductsQuery } from "@/redux/features/product/productApi";
 
 const HomePage = () => {
-  const { data: flowers, isFetching } = useProductsQuery({
+  const {
+    data: flowers,
+    isFetching,
+    error,
+  } = useProductsQuery({
     searchTerm: "",
     categories: "",
     priceRange: ["", ""],
     sortValue: "",
     page: "",
   });
+  if (error) {
+    console.log(error);
+  }
 
   return (
     <>
