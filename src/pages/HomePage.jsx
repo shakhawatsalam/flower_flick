@@ -11,7 +11,7 @@ const HomePage = () => {
   const {
     data: flowers,
     isFetching,
-    error,
+  error,
   } = useProductsQuery({
     searchTerm: "",
     categories: "",
@@ -19,9 +19,7 @@ const HomePage = () => {
     sortValue: "",
     page: "",
   });
-  if (error) {
-    console.log(error);
-  }
+  console.log(error);
 
   return (
     <>

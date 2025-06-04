@@ -17,6 +17,7 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import ChartSheet from "./ChartSheet";
 import { addUser } from "@/redux/features/user/userSlice";
 import { removeCart } from "@/redux/features/cart/cartSlice";
+import { useGetCartQuery } from "@/redux/features/cart/cartApi";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -27,7 +28,10 @@ const navItems = [
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.userSlice);
-  const { cart } = useSelector((state) => state.cartSlice);
+  // const { cart } = useSelector((state) => state.cartSlice);
+  // const { cart } = useSelector((state) => state.cartSlice);
+  const { data: cartData } = useGetCartQuery();
+  const cart = cartData?.[0] || {};
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -91,17 +95,20 @@ const Navbar = () => {
                   <DropdownMenuItem>
                     <Link to='/profile'>Profile</Link>
                   </DropdownMenuItem>
-                  {user && user.is_staff && (
-                    <DropdownMenuItem>
-                      <Link to='/dashboard'>Dashboard</Link>
-                    </DropdownMenuItem>
-                  )}
+
                   <DropdownMenuItem>
+                    <Link
+                      to={user.is_staff ? "/dashboard" : "/dashboard/my-cart"}>
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+
+                  {/* <DropdownMenuItem>
                     <Link to='/cart'>My Cart</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Link to='/orders'>My Orders</Link>
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
                   <DropdownMenuItem
                     className='cursor-pointer'
                     onClick={handleLogout}>

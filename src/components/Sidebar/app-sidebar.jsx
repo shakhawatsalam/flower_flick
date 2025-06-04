@@ -3,6 +3,7 @@ import {
   ChartBarStacked,
   ShoppingBasket,
   SquareKanban,
+  ShoppingCart,
 } from "lucide-react";
 
 import {
@@ -18,13 +19,24 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Link, useLocation } from "react-router";
+import { useSelector } from "react-redux";
 
-// Menu items.
-const items = [
+// Menu admin.
+const admin = [
   {
-    title: "Home",
+    title: "Dashboard",
     url: "/dashboard",
     icon: Home,
+  },
+  {
+    title: "My Cart",
+    url: "/dashboard/my-cart",
+    icon: ShoppingCart,
+  },
+  {
+    title: "My Orders",
+    url: "/dashboard/my-orders",
+    icon: ShoppingBasket,
   },
   {
     title: "Flowers",
@@ -43,8 +55,25 @@ const items = [
   },
 ];
 
+const user = [
+  {
+    title: "My Cart",
+    url: "/dashboard/my-cart",
+    icon: ShoppingCart,
+  },
+  {
+    title: "My Orders",
+    url: "/dashboard/my-orders",
+    icon: ShoppingBasket,
+  },
+];
+
 export function AppSidebar({ ...props }) {
   const { pathname } = useLocation();
+  const { user: currentUser } = useSelector((state) => state.userSlice);
+
+  const menuItems = currentUser?.is_staff ? admin : user;
+
   return (
     <Sidebar {...props} className='font-montserrat'>
       <SidebarHeader>
@@ -59,10 +88,10 @@ export function AppSidebar({ ...props }) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
-                    className={`h-14 tracking-wider hover:bg-[#fac7c2] transition-all duration-150  ${
+                    className={`h-14 tracking-wider hover:bg-[#fac7c2] transition-all duration-150 text-[16px] ${
                       item.url === pathname && "bg-[#F34F3F] text-white"
                     }`}
                     asChild>

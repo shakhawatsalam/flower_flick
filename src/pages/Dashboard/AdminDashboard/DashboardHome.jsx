@@ -15,7 +15,7 @@ const DashboardHome = () => {
     <div>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4 lg:px-6'>
         {/* Card 1 */}
-        <Card className='shadow-sm bg-gradient-to-t from-[#F34F3F]/30 to-card dark:bg-card'>
+        <Card className='shadow-sm bg-white dark:bg-card'>
           <CardHeader className='relative'>
             <CardDescription>Total Revenue</CardDescription>
             <CardTitle className='text-2xl font-semibold tabular-nums'>
@@ -41,7 +41,7 @@ const DashboardHome = () => {
         </Card>
 
         {/* Card 2 */}
-        <Card className='shadow-sm bg-gradient-to-t from-[#F34F3F]/30 to-card dark:bg-card'>
+        <Card className='shadow-sm bg-white dark:bg-card'>
           <CardHeader className='relative'>
             <CardDescription>New Customers</CardDescription>
             <CardTitle className='text-2xl font-semibold tabular-nums'>
@@ -67,7 +67,7 @@ const DashboardHome = () => {
         </Card>
 
         {/* Card 3 */}
-        <Card className='shadow-sm bg-gradient-to-t from-[#F34F3F]/30 to-card dark:bg-card'>
+        <Card className='shadow-sm bg-white dark:bg-card'>
           <CardHeader className='relative'>
             <CardDescription>Active Accounts</CardDescription>
             <CardTitle className='text-2xl font-semibold tabular-nums'>
@@ -93,7 +93,7 @@ const DashboardHome = () => {
         </Card>
 
         {/* Card 4 */}
-        <Card className='shadow-sm bg-gradient-to-t from-[#F34F3F]/30 to-card dark:bg-card'>
+        <Card className='shadow-sm bg-white dark:bg-card'>
           <CardHeader className='relative'>
             <CardDescription>Growth Rate</CardDescription>
             <CardTitle className='text-2xl font-semibold tabular-nums'>

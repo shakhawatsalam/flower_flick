@@ -50,7 +50,7 @@ const formSchema = z
   });
 
 const Signup = () => {
-  const [signUp, { data, error }] = useSignUpMutation();
+  const [signUp] = useSignUpMutation();
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -67,7 +67,6 @@ const Signup = () => {
 
   async function onSubmit(values) {
     try {
-      // Remove confirmPassword from the payload since the API likely doesn't need it
       const { confirmPassword, ...payload } = values;
       const signInResponse = await signUp(payload).unwrap();
       if (signInResponse) {
@@ -75,10 +74,15 @@ const Signup = () => {
       }
     } catch (err) {
       console.error("Signup failed:", err);
+      // Set password field error if there are password validation errors
+      if (err?.data?.password) {
+        form.setError("password", {
+          type: "manual",
+          message: err.data.password.join(" "),
+        });
+      }
     }
   }
-  console.log(data);
-  console.log(error);
 
   return (
     <section>

@@ -4,10 +4,10 @@ import AboutPage from "@/pages/AboutPage";
 import ActivateAccountPage from "@/pages/ActivateAccountPage";
 import BlogPage from "@/pages/BlogPage";
 import CartPage from "@/pages/CartPage";
-import DashboardCategories from "@/pages/Dashboard/DashboardCategories";
-import DashboardFlower from "@/pages/Dashboard/DashboardFlower";
-import DashboardHome from "@/pages/Dashboard/DashboardHome";
-import DashboardOrders from "@/pages/Dashboard/DashboardOrders";
+import DashboardCategories from "@/pages/Dashboard/AdminDashboard/DashboardCategories";
+import DashboardFlower from "@/pages/Dashboard/AdminDashboard/DashboardFlower";
+import DashboardHome from "@/pages/Dashboard/AdminDashboard/DashboardHome";
+import DashboardOrders from "@/pages/Dashboard/AdminDashboard/DashboardOrders";
 import EmailCheckPage from "@/pages/EmailCheckPage";
 import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
@@ -27,11 +27,16 @@ import { Route, Routes } from "react-router";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 import ProfilePage from "@/pages/ProfilePage";
+import DashboardMyCart from "@/pages/Dashboard/UserDashboard/DashboardMyCart";
+import DashboardMyOrder from "@/pages/Dashboard/UserDashboard/DashboardMyOrder";
 
 const AppRoutes = () => {
-  const { data: userData } = useFetchUserProfileQuery(undefined, {
-    skip: !getFromLocalStorage("authToken"), // Skip query if no token
-  });
+  const { data: userData, isSuccess: isUserSuccess } = useFetchUserProfileQuery(
+    undefined,
+    {
+      skip: !getFromLocalStorage("authToken"), // Skip query if no token
+    }
+  );
   const [createCart, { data: cart, isSuccess }] = useCreateCartMutation();
   const dispatch = useDispatch();
   const hasCreatedCart = useRef(false); // Track if cart creation was attempted
@@ -48,7 +53,7 @@ const AppRoutes = () => {
     if (isSuccess && cart) {
       dispatch(addCart(cart)); // Dispatch cart when mutation succeeds
     }
-  }, [cart, isSuccess, dispatch]);
+  }, [cart, isSuccess, dispatch, isUserSuccess, userData]);
 
   useEffect(() => {
     if (userData) {
@@ -82,14 +87,16 @@ const AppRoutes = () => {
       </Route>
       <Route
         element={
-          <AdminRoute>
+          <PrivateRoute>
             <DashboardLayout />
-          </AdminRoute>
+          </PrivateRoute>
         }>
         <Route path='/dashboard' element={<DashboardHome />} />
         <Route path='/dashboard/flowers' element={<DashboardFlower />} />
         <Route path='/dashboard/categories' element={<DashboardCategories />} />
         <Route path='/dashboard/orders' element={<DashboardOrders />} />
+        <Route path='/dashboard/my-orders' element={<DashboardMyOrder />} />
+        <Route path='/dashboard/my-cart' element={<DashboardMyCart />} />
       </Route>
     </Routes>
   );

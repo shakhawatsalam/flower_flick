@@ -9,8 +9,9 @@ const DashboardLayout = () => {
   return (
     <SidebarProvider>
       <AppSidebar variant='inset' />
-      <SidebarInset>
+      <SidebarInset className='bg-[#F7F7F7]'>
         <SidebarTrigger className='ml-1' />
+
         <Outlet />
       </SidebarInset>
     </SidebarProvider>

@@ -36,7 +36,7 @@ const ProductList = ({ flowers, page, setPage, totalPages, isFetching }) => {
       <div className='container max-w-7xl mx-auto '>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 justify-self-center lg:justify-self-auto '>
           {isFetching
-            ? [...Array(4)].map((_, idx) => (
+            ? [...Array(8)].map((_, idx) => (
                 <div
                   key={idx}
                   className='group flex flex-col gap-2 justify-center items-center w-72 rounded font-montserrat animate-pulse'>

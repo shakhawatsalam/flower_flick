@@ -34,7 +34,7 @@ const ProductDetailsPage = () => {
   });
   console.log(data?.images[0]?.image);
   const dispatch = useDispatch();
-  console.log(cart);
+
   // Handle quantity increment
   const handleIncrement = () => {
     if (quantity < data?.quantity) {
@@ -48,7 +48,7 @@ const ProductDetailsPage = () => {
       setQuantity((prev) => prev - 1);
     }
   };
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (flower) => {
     if (!cartId) {
       console.error("No cart ID available. Cannot add to cart.");
       toast("Login Required", {
@@ -67,7 +67,7 @@ const ProductDetailsPage = () => {
         quantity,
       };
       console.log({ cartId, data });
-      await addToCart({ cartId, data }).unwrap();
+      await addToCart({ cartId, data, flower }).unwrap();
     } catch (error) {
       console.log(error);
     }
@@ -171,7 +171,7 @@ const ProductDetailsPage = () => {
                 </div>
                 <Button
                   className='h-14 rounded-l-none bg-black hover:bg-black/90 cursor-pointer uppercase tracking-widest'
-                  onClick={handleAddToCart}>
+                  onClick={() => handleAddToCart(data)}>
                   {isLoading
                     ? "Adding..."
                     : isSuccess

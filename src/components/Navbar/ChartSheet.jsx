@@ -1,45 +1,64 @@
 import { SheetContent } from "../ui/sheet";
-import flowerImage from "../../assets/images/shop-14-img.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useDeleteCartItemMutation,
+  useGetCartQuery,
   useUpdateCartItemMutation,
 } from "@/redux/features/cart/cartApi";
-import {
-  deleteItem,
-  updateItemQuantity,
-} from "@/redux/features/cart/cartSlice";
+import { deleteItem } from "@/redux/features/cart/cartSlice";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Link } from "react-router";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
-const CartSheet = () => {
-  const { cart } = useSelector((state) => state.cartSlice);
+import { useState } from "react";
 
+const CartSheet = () => {
+  const { data: cartData, isFetching } = useGetCartQuery();
+  const cart = cartData ? cartData[0] : {};
   const [updateCartItem] = useUpdateCartItemMutation();
   const [deleteCartItem] = useDeleteCartItemMutation();
-  const debounce = useDebouncedCallback(1000);
-  const dispatch = useDispatch();
-  // Handle Update Quantity
-  const handleUpdateCartItem = (itemId, quantity) => {
-    if (quantity < 1) return;
+  const [localQuantities, setLocalQuantities] = useState({});
 
-    dispatch(updateItemQuantity({ itemId, quantity }));
-
-    const { id: cartId } = cart;
-    const data = { quantity };
-
-    debounce(itemId, async () => {
+  const debouncedUpdateCartItem = useDebouncedCallback(
+    async (itemId, quantity) => {
       try {
-        await updateCartItem({ cartId, itemId, data }).unwrap();
+        const { id: cartId } = cart;
+        await updateCartItem({ cartId, itemId, data: { quantity } }).unwrap();
       } catch (error) {
         console.error("error updating quantity", error);
       }
-    });
+    },
+    1000
+  );
+  const handleQuantityChange = (itemId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    // Update local UI state
+    setLocalQuantities((prev) => ({
+      ...prev,
+      [itemId]: newQuantity,
+    }));
+
+    // Trigger debounced API update
+    debouncedUpdateCartItem(itemId, newQuantity);
   };
+
+  // // Handle Update Quantity
+  // const handleUpdateCartItem = async (itemId, quantity) => {
+  //   if (quantity < 1) return;
+
+  //   const { id: cartId } = cart;
+  //   const data = { quantity };
+
+  //   try {
+  //     await updateCartItem({ cartId, itemId, data }).unwrap();
+  //   } catch (error) {
+  //     console.error("error updating quantity", error);
+  //   }
+  // };
   // Handle Delete Item's
   const handleDeleteCartItem = async (itemId) => {
-    dispatch(deleteItem(itemId));
+    // dispatch(deleteItem(itemId));
 
     try {
       const { id: cartId } = cart;
@@ -76,16 +95,29 @@ const CartSheet = () => {
                 <div className='flex items-center mt-2 gap-3'>
                   <button
                     className='px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded-md'
+                    disabled={isFetching}
                     onClick={() =>
-                      handleUpdateCartItem(item.id, item.quantity - 1)
+                      handleQuantityChange(
+                        item.id,
+                        (localQuantities[item.id] ?? item.quantity) - 1
+                      )
                     }>
                     -
                   </button>
-                  <span className='px-3'>{item.quantity}</span>
+                  <span className='px-3'>
+                    {localQuantities[item.id] ?? item.quantity}
+                  </span>
+
                   <button
-                    className='px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded-md'
+                    className={`px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded-md ${
+                      isFetching && "bg-gray-300"
+                    }`}
+                    disabled={isFetching}
                     onClick={() =>
-                      handleUpdateCartItem(item.id, item.quantity + 1)
+                      handleQuantityChange(
+                        item.id,
+                        (localQuantities[item.id] ?? item.quantity) + 1
+                      )
                     }>
                     +
                   </button>
@@ -108,7 +140,7 @@ const CartSheet = () => {
         </div>
         <div>
           {cart?.items?.length !== 0 && (
-            <Link to='/cart'>
+            <Link to='/dashboard/my-cart'>
               <Button className='bg-[#F34F3F] hover:bg-[#d8200e] cursor-pointer h-12 w-full uppercase'>
                 View Cart
               </Button>

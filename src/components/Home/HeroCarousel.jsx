@@ -86,7 +86,7 @@ const HeroCarousel = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className='absolute container max-w-7xl mx-auto inset-0 flex flex-col items-start justify-center p-5 lg:p-5'>
-                <div className='max-w-[400px] md:max-w-xl'>
+                <div className='max-w-[400px] md:max-w-xl p-5 xl:p-0'>
                   <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

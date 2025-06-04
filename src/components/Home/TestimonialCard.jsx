@@ -2,7 +2,7 @@ import testimonialImage from "../../assets/images/h1-img-3.png";
 
 const TestimonialCard = () => {
   return (
-    <section className='flex flex-col items-center gap-4 mb-14'>
+    <section className='flex flex-col items-center gap-4 mb-14 p-4 md:p-0'>
       <div>
         <img src={testimonialImage} alt='TestimonialCard Image' />
       </div>

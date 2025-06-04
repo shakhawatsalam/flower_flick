@@ -54,7 +54,7 @@ const DashboardCategories = () => {
 
   return (
     <section className='p-10'>
-      <div className='h-48 mb-16  border-b border-dashed shadow-2xs'>
+      <div className='h-32 mb-20 md:mb-0'>
         <div className='flex flex-col md:flex-row justify-between md:items-center gap-5 p-5 lg:p-0'>
           <div>
             <h1 className='font-montserrat text-4xl mb-5'>Category List</h1>

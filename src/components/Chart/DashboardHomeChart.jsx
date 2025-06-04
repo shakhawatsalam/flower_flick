@@ -10,7 +10,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
- 
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -157,7 +156,7 @@ export function DashboardHomeChart() {
   });
 
   return (
-    <Card>
+    <Card className='bg-white dark:bg-card'>
       <CardHeader className='relative'>
         <CardTitle>Total Visitors</CardTitle>
         <CardDescription className='text-sm sm:text-base'>
@@ -195,7 +194,7 @@ export function DashboardHomeChart() {
         </div>
       </CardHeader>
 
-      <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>
+      <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6 bg-gray-50 dark:bg-gray-900/50 rounded-lg'>
         <ChartContainer config={chartConfig} className='h-[450px] w-full'>
           <AreaChart data={filteredData}>
             <defs>

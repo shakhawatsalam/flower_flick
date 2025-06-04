@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 const AboutUsHero = () => {
   return (
     <Parallax
-      blur={10}
+      blur={3}
       bgImage={newsletterLetterImg}
       bgImageAlt='the cat'
       strength={800}

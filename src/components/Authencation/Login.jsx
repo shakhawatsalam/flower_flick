@@ -20,6 +20,8 @@ import {
 import { getFromLocalStorage, setToLocalStorage } from "@/utils/local_sotrage";
 import { useDispatch } from "react-redux";
 import { addUser } from "@/redux/features/user/userSlice";
+import { useCreateCartMutation } from "@/redux/features/cart/cartApi";
+import { addCart } from "@/redux/features/cart/cartSlice";
 
 const formSchema = z.object({
   email: z
@@ -42,10 +44,12 @@ const formSchema = z.object({
 
 const Login = () => {
   const [logIn, { isLoading }] = useLogInMutation();
+  const [createCart] = useCreateCartMutation();
   const location = useLocation();
   const navigate = useNavigate();
   const [getMe] = useLazyFetchUserProfileQuery();
   const dispatch = useDispatch();
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,6 +59,8 @@ const Login = () => {
   });
   // This is where the user originally tried to go
   const from = location.state?.from?.pathname || "/";
+
+  // Login
   async function onSubmit(values) {
     try {
       const loginResponse = await logIn(values).unwrap();
@@ -69,6 +75,13 @@ const Login = () => {
         if (userResponse) {
           console.log("USER DATA =>", userResponse);
           dispatch(addUser(userResponse));
+
+          // Create and set cart after successful login
+          const cartResponse = await createCart().unwrap();
+          if (cartResponse) {
+            dispatch(addCart(cartResponse));
+          }
+
           navigate(from, { replace: true }); // Redirect to intended route
         }
       }

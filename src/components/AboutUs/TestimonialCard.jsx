@@ -18,7 +18,7 @@ const TestimonialCard = () => {
                 <div className='h-32 w-32'>
                   <img src={expert.image} alt='' className='h-full w-full' />
                 </div>
-                <p className='text-center text-xl font-lora tracking-wider text-gray-800 italic'>
+                <p className='text-center text-lg md:text-xl font-lora tracking-wider text-gray-800 italic max-w-sm md:max-w-full'>
                   Nullam dictum felis eu pede mollis pretium. Integer tincidunt.
                   Cras dapibus lingua.
                 </p>
@@ -30,7 +30,7 @@ const TestimonialCard = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <div className='absolute inset-0 flex justify-between text-gray-400'>
+        <div className='absolute inset-0 hidden md:flex justify-between text-gray-400'>
           <button className='cursor-pointer' onClick={() => api.scrollPrev()}>
             <svg
               xmlns:x='http://ns.adobe.com/Extensibility/1.0/'
