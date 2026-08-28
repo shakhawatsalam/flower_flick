@@ -5,7 +5,6 @@ import { z } from "zod";
 import {
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -27,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AnimatePresence, motion } from "motion/react";
 import { useDropzone } from "react-dropzone";
 // import {
 //   useUpdateFlowerMutation,
@@ -42,6 +40,7 @@ import {
 } from "@/redux/features/product/productApi";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { MoveLeft } from "lucide-react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -56,12 +55,13 @@ const formSchema = z.object({
   //   category: z.string().nonempty("Category is required"),
 });
 
-const EditFlowerDialog = ({ flower, setOpen }) => {
-  const [flowerId, setFlowerId] = useState(flower?.id);
+const EditFlowerDialog = ({ flower }) => {
+  const flowerId = flower?.id;
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const { data: categories } = useGetAllCategoriesQuery();
-  const [updateFlower] = useUpdateFlowerMutation();
+  const [updateFlower, { isLoading: isDetailsUpdating }] =
+    useUpdateFlowerMutation();
   const [uploadFlowerImage, { isLoading: isImageUploading }] =
     useUploadFlowerImageMutation();
   const { data: flowerImages, refetch } = useGetFlowerImageQuery({ flowerId });
@@ -83,14 +83,16 @@ const EditFlowerDialog = ({ flower, setOpen }) => {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, continueToImages = false) => {
     try {
-      const updated = await updateFlower({ id: flowerId, data });
-      if (updated && flowerImages) {
+      await updateFlower({ id: flowerId, data }).unwrap();
+      toast.success("Flower details updated successfully.");
+      if (continueToImages) {
         setGoToUploadStep(true);
       }
     } catch (err) {
       console.error("Failed to update flower", err);
+      toast.error("Could not update flower details.");
     }
   };
 
@@ -112,12 +114,12 @@ const EditFlowerDialog = ({ flower, setOpen }) => {
         await uploadFlowerImage({ flowerId, data: formData }).unwrap();
         refetch();
       }
-      alert("Images updated successfully!");
-      setOpen(false);
-      refetch();
-      setGoToUploadStep(false);
+      toast.success("Images updated successfully.");
+      setImages([]);
+      await refetch();
     } catch (err) {
       console.error("Image update failed", err);
+      toast.error("Could not update the flower images.");
     }
   };
   // Delete Image
@@ -133,88 +135,82 @@ const EditFlowerDialog = ({ flower, setOpen }) => {
     setImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
-  const slideVariants = {
-    hidden: { x: "100%", opacity: 0 },
-    visible: { x: 0, opacity: 1 },
-    exit: { x: "-100%", opacity: 0 },
-  };
-
   return (
     <>
       {goToUploadStep ? (
         <DialogContent className='sm:max-w-[425px] font-montserrat'>
           <DialogHeader>
-            <MoveLeft
+            <button
+              type='button'
               onClick={() => setGoToUploadStep(false)}
-              className='cursor-pointer'
-            />
+              className='w-fit cursor-pointer'
+              aria-label='Back to flower details'>
+              <MoveLeft />
+            </button>
             <DialogTitle className='text-center'>Update Images</DialogTitle>
             <DialogDescription className='text-center text-sm text-gray-500'>
               Add or remove images below
             </DialogDescription>
           </DialogHeader>
-          <AnimatePresence mode='wait'>
-            <div className='overflow-hidden'>
-              <motion.div
-                variants={slideVariants}
-                initial='hidden'
-                animate='visible'
-                exit='exit'
-                transition={{ type: "spring", duration: 0.5, stiffness: 100 }}
-                className='space-y-4'>
-                <div
-                  {...getRootProps()}
-                  className='border-2 border-dashed border-gray-300 p-6 rounded-md cursor-pointer text-center bg-white'>
-                  <input {...getInputProps()} disabled={isImageUploading} />
-                  {isDragActive ? (
-                    <p className='text-gray-500'>Drop the images here...</p>
-                  ) : (
-                    <p className='text-gray-500'>
-                      Drag & drop or click to select images
-                    </p>
-                  )}
-                </div>
+          <div className='overflow-hidden'>
+            <div className='space-y-4'>
+              <div
+                {...getRootProps()}
+                className='border-2 border-dashed border-gray-300 p-6 rounded-md cursor-pointer text-center bg-white'>
+                <input {...getInputProps()} disabled={isImageUploading} />
+                {isDragActive ? (
+                  <p className='text-gray-500'>Drop the images here...</p>
+                ) : (
+                  <p className='text-gray-500'>
+                    Drag & drop or click to select images
+                  </p>
+                )}
+              </div>
 
-                <div className='grid grid-cols-3 gap-4'>
-                  {existingImages?.map((image, idx) => (
-                    <div key={`existing-${idx}`} className='relative group'>
-                      <img
-                        src={image?.image} // or whatever field contains the image URL
-                        alt={`existing-${idx}`}
-                        className='w-full h-28 object-cover rounded'
-                      />
-                      <button
-                        onClick={() => handleRemoveExistingImage(image.id)}
-                        className='absolute top-1 right-1 bg-[#F34F3F] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs cursor-pointer'>
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                  {images?.map((file, idx) => (
-                    <div key={idx} className='relative group'>
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={`uploaded-${idx}`}
-                        className='w-full h-28 object-cover rounded'
-                      />
-                      <button
-                        onClick={() => removeImage(idx)}
-                        className='absolute top-1 right-1 bg-[#F34F3F] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs cursor-pointer'>
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
+              <div className='grid grid-cols-3 gap-4'>
+                {existingImages?.map((image, idx) => (
+                  <div key={`existing-${idx}`} className='relative group'>
+                    <img
+                      src={image?.image} // or whatever field contains the image URL
+                      alt={`existing-${idx}`}
+                      className='w-full h-28 object-cover rounded'
+                    />
+                    <button
+                      onClick={() => handleRemoveExistingImage(image.id)}
+                      className='absolute top-1 right-1 bg-[#F34F3F] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs cursor-pointer'>
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                {images?.map((file, idx) => (
+                  <div key={idx} className='relative group'>
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={`uploaded-${idx}`}
+                      className='w-full h-28 object-cover rounded'
+                    />
+                    <button
+                      onClick={() => removeImage(idx)}
+                      className='absolute top-1 right-1 bg-[#F34F3F] text-white rounded-full w-5 h-5 flex items-center justify-center text-xs cursor-pointer'>
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
 
-                <Button
-                  onClick={uploadImages}
-                  disabled={isImageUploading || images.length === 0}
-                  className='bg-[#F34F3F] hover:bg-[#d8200e] w-full h-12 uppercase cursor-pointer'>
-                  {isImageUploading ? "Uploading..." : "Update Images"}
+              <Button
+                onClick={uploadImages}
+                disabled={isImageUploading || images.length === 0}
+                className='bg-[#F34F3F] hover:bg-[#d8200e] w-full h-12 uppercase cursor-pointer'>
+                {isImageUploading ? "Uploading..." : "Update Images"}
+              </Button>
+              <DialogClose asChild>
+                <Button type='button' variant='outline' className='w-full'>
+                  Done
                 </Button>
-              </motion.div>
+              </DialogClose>
             </div>
-          </AnimatePresence>
+          </div>
         </DialogContent>
       ) : (
         <DialogContent className='sm:max-w-[425px] font-montserrat'>
@@ -225,7 +221,7 @@ const EditFlowerDialog = ({ flower, setOpen }) => {
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-3'>
+            <form className='space-y-3'>
               <FormField
                 control={form.control}
                 name='title'
@@ -315,9 +311,26 @@ const EditFlowerDialog = ({ flower, setOpen }) => {
                 )}
               />
               <Button
-                className='bg-[#F34F3F] hover:bg-[#d8200e] w-full h-12 uppercase cursor-pointer'
-                type='submit'>
-                Next
+                type='button'
+                onClick={form.handleSubmit((data) => onSubmit(data))}
+                disabled={isDetailsUpdating}
+                className='bg-[#F34F3F] hover:bg-[#d8200e] w-full h-12 uppercase cursor-pointer'>
+                {isDetailsUpdating ? "Saving..." : "Save Details"}
+              </Button>
+              <Button
+                type='button'
+                onClick={form.handleSubmit((data) => onSubmit(data, true))}
+                disabled={isDetailsUpdating}
+                variant='outline'
+                className='w-full h-12 uppercase cursor-pointer'>
+                Save Details & Continue to Images
+              </Button>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => setGoToUploadStep(true)}
+                className='w-full h-12 uppercase cursor-pointer'>
+                Manage Images Only
               </Button>
             </form>
           </Form>

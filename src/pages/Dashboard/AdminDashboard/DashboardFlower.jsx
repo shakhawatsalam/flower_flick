@@ -114,7 +114,7 @@ const DashboardFlower = () => {
       <div className='h-32 mb-20 md:mb-0'>
         <div className='flex flex-col md:flex-row justify-between md:items-center gap-5 p-5 lg:p-0'>
           <div>
-            <h1 className='font-montserrat text-4xl mb-5'>Flower's List</h1>
+            <h1 className='font-montserrat text-4xl mb-5'>Flower's List </h1>
             <p className='font-lora text-gray-600 italic text-[18px]'>
               Where flowers are our inspiration
             </p>
