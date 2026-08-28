@@ -12,12 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
-const images = [
-  "https://i.ibb.co.com/GTGBw03/image-323.png",
-  "https://i.ibb.co.com/thxkk1x/image-320.png",
-  "https://i.ibb.co.com/MckV93r/image-320.png",
-  "https://i.ibb.co.com/ZGWRGDT/image-320.png",
-];
+
 
 const ProductDetailsPage = () => {
   const navigate = useNavigate();
@@ -32,12 +27,14 @@ const ProductDetailsPage = () => {
   const { data: updatedCart, refetch } = useGetCartQuery({
     skip: !isSuccess,
   });
+  const stock = Number(data?.quantity ?? 0);
+  const isUnavailable = stock <= 0;
   console.log(data?.images[0]?.image);
   const dispatch = useDispatch();
 
   // Handle quantity increment
   const handleIncrement = () => {
-    if (quantity < data?.quantity) {
+    if (quantity < stock) {
       setQuantity((prev) => prev + 1);
     }
   };
@@ -49,6 +46,10 @@ const ProductDetailsPage = () => {
     }
   };
   const handleAddToCart = async (flower) => {
+    if (isUnavailable) {
+      return;
+    }
+
     if (!cartId) {
       console.error("No cart ID available. Cannot add to cart.");
       toast("Login Required", {
@@ -170,18 +171,26 @@ const ProductDetailsPage = () => {
                   </div>
                 </div>
                 <Button
-                  className='h-14 rounded-l-none bg-black hover:bg-black/90 cursor-pointer uppercase tracking-widest'
+                  disabled={isUnavailable || isLoading}
+                  className='h-14 rounded-l-none bg-black hover:bg-black/90 cursor-pointer uppercase tracking-widest disabled:cursor-not-allowed disabled:opacity-50'
                   onClick={() => handleAddToCart(data)}>
-                  {isLoading
-                    ? "Adding..."
-                    : isSuccess
-                    ? "Added"
-                    : "Add to Cart"}
+                  {isUnavailable
+                    ? "Out of stock"
+                    : isLoading
+                      ? "Adding..."
+                      : isSuccess
+                        ? "Added"
+                        : "Add to Cart"}
                 </Button>
               </div>
-              <div className='font-montserrat text-[14px]'>
-                Stock: {data?.quantity}
-              </div>
+              <div className='font-montserrat text-[14px]'>Stock: {stock}</div>
+              {isUnavailable && (
+                <p
+                  className='font-montserrat text-sm text-[#F34F3F]'
+                  role='alert'>
+                  This item is currently not available.
+                </p>
+              )}
             </div>
           </div>
         </div>

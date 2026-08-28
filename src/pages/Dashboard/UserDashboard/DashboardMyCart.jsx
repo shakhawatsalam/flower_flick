@@ -1,6 +1,6 @@
 import { Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   Table,
   TableBody,
@@ -17,13 +17,9 @@ import {
 } from "@/redux/features/cart/cartApi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCreateOrderMutation } from "@/redux/features/order/orderApi";
-import {
-  addCart,
-  deleteItem,
-  removeCart,
-  updateItemQuantity,
-} from "@/redux/features/cart/cartSlice";
+import { addCart, removeCart } from "@/redux/features/cart/cartSlice";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 const DashboardMyCart = () => {
@@ -53,7 +49,7 @@ const DashboardMyCart = () => {
         console.error("error updating quantity", error);
       }
     },
-    1000
+    1000,
   );
   // handle update quantity change and calling the debouncedUpdateCartItem(itemId, newQuantity)
   const handleQuantityChange = (itemId, newQuantity) => {
@@ -108,14 +104,22 @@ const DashboardMyCart = () => {
         await createCart().unwrap();
       }
     } catch (error) {
-      console.log("Error Creating Order", error);
+      const message =
+        error?.data?.detail ||
+        "We could not complete your checkout. Please try again.";
+
+      toast.error("Checkout unavailable", {
+        description: message,
+      });
     }
   };
 
   return (
     <section className='p-4 md:p-10'>
       <div className='mb-8'>
-        <h1 className='font-playfair text-3xl md:text-4xl mb-4'>My Cart</h1>
+        <h1 className='font-playfair text-3xl md:text-4xl mb-4'>
+          My Cart dfad
+        </h1>
         <p className='font-lora text-gray-600 italic text-[16px] md:text-[18px]'>
           Review and manage your cart items
         </p>
@@ -177,7 +181,7 @@ const DashboardMyCart = () => {
                             onClick={() =>
                               handleQuantityChange(
                                 item.id,
-                                (localQuantities[item.id] ?? item.quantity) - 1
+                                (localQuantities[item.id] ?? item.quantity) - 1,
                               )
                             }
                           />
@@ -192,7 +196,7 @@ const DashboardMyCart = () => {
                             onClick={() =>
                               handleQuantityChange(
                                 item.id,
-                                (localQuantities[item.id] ?? item.quantity) + 1
+                                (localQuantities[item.id] ?? item.quantity) + 1,
                               )
                             }
                           />

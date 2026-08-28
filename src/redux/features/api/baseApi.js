@@ -13,8 +13,8 @@ function isTokenExpired(token) {
 }
 
 const baseQuery = fetchBaseQuery({
-  // baseUrl: "https://flowerflick.vercel.app/api/v1",
-  baseUrl: "http://127.0.0.1:8000/api/v1",
+  baseUrl: "https://flowerflick.vercel.app/api/v1",
+  // baseUrl: "http://127.0.0.1:8000/api/v1",
   credentials: "include",
   prepareHeaders: (headers) => {
     try {
