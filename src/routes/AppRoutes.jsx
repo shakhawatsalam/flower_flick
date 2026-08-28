@@ -69,6 +69,7 @@ const AppRoutes = () => {
         <Route path='/blog' element={<BlogPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />
         <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
       </Route>
@@ -82,8 +83,6 @@ const AppRoutes = () => {
         <Route path='/cart' element={<CartPage />} />
         <Route path='/orders' element={<OrderPage />} />
         <Route path='/payment-success' element={<PaymentSuccess />} />
-        {/* <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} /> */}
-        <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/profile' element={<ProfilePage />} />
       </Route>
       <Route

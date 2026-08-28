@@ -13,7 +13,8 @@ function isTokenExpired(token) {
 }
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://flowerflick.vercel.app/api/v1",
+  // baseUrl: "https://flowerflick.vercel.app/api/v1",
+  baseUrl: "http://127.0.0.1:8000/api/v1",
   credentials: "include",
   prepareHeaders: (headers) => {
     try {
@@ -50,7 +51,7 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["CART", "PRODUCT", "IMAGE", "CATEGORY","CREATE_CART"],
+  tagTypes: ["CART", "PRODUCT", "IMAGE", "CATEGORY", "CREATE_CART"],
   endpoints: () => ({}),
 });
 

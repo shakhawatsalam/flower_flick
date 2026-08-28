@@ -67,7 +67,8 @@ const Signup = () => {
 
   async function onSubmit(values) {
     try {
-      const { confirmPassword, ...payload } = values;
+      const payload = { ...values };
+      delete payload.confirmPassword;
       const signInResponse = await signUp(payload).unwrap();
       if (signInResponse) {
         navigate("/check-email", { state: { email: values.email } });
