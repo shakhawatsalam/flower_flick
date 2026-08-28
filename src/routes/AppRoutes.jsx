@@ -35,7 +35,7 @@ const AppRoutes = () => {
     undefined,
     {
       skip: !getFromLocalStorage("authToken"), // Skip query if no token
-    }
+    },
   );
   const [createCart, { data: cart, isSuccess }] = useCreateCartMutation();
   const dispatch = useDispatch();
@@ -70,6 +70,7 @@ const AppRoutes = () => {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />
+        <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
       </Route>
       {/* Protected routes with MainLayout inside PrivateRoute */}
       <Route
@@ -81,7 +82,7 @@ const AppRoutes = () => {
         <Route path='/cart' element={<CartPage />} />
         <Route path='/orders' element={<OrderPage />} />
         <Route path='/payment-success' element={<PaymentSuccess />} />
-        <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
+        {/* <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} /> */}
         <Route path='/check-email' element={<EmailCheckPage />} />
         <Route path='/profile' element={<ProfilePage />} />
       </Route>
