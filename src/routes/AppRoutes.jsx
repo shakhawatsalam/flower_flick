@@ -26,6 +26,7 @@ import { useDispatch } from "react-redux";
 import { Route, Routes } from "react-router";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
+import GuestRoute from "./GuestRoute";
 import ProfilePage from "@/pages/ProfilePage";
 import DashboardMyCart from "@/pages/Dashboard/UserDashboard/DashboardMyCart";
 import DashboardMyOrder from "@/pages/Dashboard/UserDashboard/DashboardMyOrder";
@@ -67,11 +68,39 @@ const AppRoutes = () => {
         <Route path='/shop' element={<ShopPage />} />
         <Route path='/about' element={<AboutPage />} />
         <Route path='/blog' element={<BlogPage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/signup' element={<SignUpPage />} />
-        <Route path='/check-email' element={<EmailCheckPage />} />
+        <Route
+          path='/login'
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path='/signup'
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path='/check-email'
+          element={
+            <GuestRoute>
+              <EmailCheckPage />
+            </GuestRoute>
+          }
+        />
         <Route path='/flower/:id' element={<ProductDetailsPage />} />
-        <Route path='/activate/:uid/:token' element={<ActivateAccountPage />} />
+        <Route
+          path='/activate/:uid/:token'
+          element={
+            <GuestRoute>
+              <ActivateAccountPage />
+            </GuestRoute>
+          }
+        />
       </Route>
       {/* Protected routes with MainLayout inside PrivateRoute */}
       <Route
