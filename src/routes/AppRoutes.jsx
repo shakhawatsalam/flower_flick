@@ -13,6 +13,7 @@ import HomePage from "@/pages/HomePage";
 import LoginPage from "@/pages/LoginPage";
 import OrderPage from "@/pages/OrderPage";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import PaymentFailed from "@/pages/PaymentFailed";
 import ProductDetailsPage from "@/pages/ProductDetailsPage";
 import ShopPage from "@/pages/ShopPage";
 import SignUpPage from "@/pages/SignUpPage";
@@ -112,6 +113,7 @@ const AppRoutes = () => {
         <Route path='/cart' element={<CartPage />} />
         <Route path='/orders' element={<OrderPage />} />
         <Route path='/payment-success' element={<PaymentSuccess />} />
+        <Route path='/payment-failed' element={<PaymentFailed />} />
         <Route path='/profile' element={<ProfilePage />} />
       </Route>
       <Route
